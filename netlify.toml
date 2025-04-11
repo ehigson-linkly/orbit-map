@@ -7,4 +7,6 @@
   to = "/index.html"
   status = 200
   force = true
-  headers = { Basic-Auth = "linkly:i00t#GG3Fzfe" }
+
+  [redirects.headers]
+    Basic-Auth = "linkly:i00t#GG3Fzfe"
