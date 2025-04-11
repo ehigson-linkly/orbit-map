@@ -4,6 +4,8 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./App.css";
 
+const PASSWORD = "i00t#GG3Fzfe"; // Your specified password
+
 const VAS_OPTIONS = [
   "Tap2Phone", "Smart Routing", "eCommerce", "POS Support",
   "AI Fraud Detection", "QR Payments", "Digital Receipts",
@@ -82,11 +84,24 @@ const getTerminalIcon = (bank, status) => {
 };
 
 function App() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [data, setData] = useState(terminals);
   const [selectedBanks, setSelectedBanks] = useState([]);
   const [selectedVASOptions, setSelectedVASOptions] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedTerminal, setSelectedTerminal] = useState(null);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === PASSWORD) {
+      setAuthenticated(true);
+      setError("");
+    } else {
+      setError("Incorrect password. Please try again.");
+    }
+  };
 
   const filteredData = useMemo(() => {
     return data.filter((t) => {
@@ -111,6 +126,67 @@ function App() {
       )
     );
   };
+
+  if (!authenticated) {
+    return (
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f5f5f5"
+      }}>
+        <div style={{
+          background: "white",
+          padding: "2rem",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          width: "350px",
+          textAlign: "center"
+        }}>
+          <h2 style={{ marginBottom: "1.5rem", color: "#333" }}>Terminal Management System</h2>
+          <p style={{ marginBottom: "1.5rem", color: "#666" }}>Please enter the password to access the system</p>
+          
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                marginBottom: "1rem",
+                border: `1px solid ${error ? "#ff4444" : "#ddd"}`,
+                borderRadius: "4px",
+                fontSize: "1rem"
+              }}
+              placeholder="Enter password"
+              autoFocus
+            />
+            {error && <p style={{ color: "#ff4444", marginBottom: "1rem" }}>{error}</p>}
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                fontSize: "1rem",
+                cursor: "pointer",
+                transition: "background-color 0.3s"
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = "#45a049"}
+              onMouseOut={(e) => e.target.style.backgroundColor = "#4CAF50"}
+            >
+              Unlock
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: "flex", height: "100vh", fontFamily: 'Helvetica Neue, sans-serif' }}>
