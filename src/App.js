@@ -68,14 +68,15 @@ const terminals = generateMockTerminals(500);
 
 const getTerminalIcon = (bank, status) => {
   const bankIcons = {
-    "Westpac": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvqbwpn54NEQrAqBSLP-pJnPcCvU6BtTpt8A&s",
-    "CBA": "https://www.commbank.com.au/content/dam/caas/newsroom/images/Smart_terminal_1.jpg"
+    "westpac": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvqbwpn54NEQrAqBSLP-pJnPcCvU6BtTpt8A&s",
+    "cba": "https://www.commbank.com.au/content/dam/caas/newsroom/images/Smart_terminal_1.jpg"
   };
 
   const statusClass = status === "active" ? "green-status" : "red-status";
+  const lowerBank = bank.toLowerCase();
 
   return new L.Icon({
-    iconUrl: bankIcons[bank] || "https://www.castlestech.com/wp-content/uploads/2023/07/S1P-castles-technology.webp",
+    iconUrl: bankIcons[lowerBank] || "https://www.castlestech.com/wp-content/uploads/2023/07/S1P-castles-technology.webp",
     iconSize: [36, 36],
     iconAnchor: [18, 36],
     popupAnchor: [0, -30],
