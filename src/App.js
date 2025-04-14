@@ -3,8 +3,10 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./App.css";
+import OrbitLogo from "./assets/orbit-logo.png";
+import LinklyLogo from "./assets/linkly-logo.png";
 
-const PASSWORD = "i00t#GG3Fzfe"; // Your specified password
+const PASSWORD = "i00t#GG3Fzfe";
 
 const VAS_OPTIONS = [
   "Tap2Phone", "Smart Routing", "eCommerce", "POS Support",
@@ -43,10 +45,7 @@ const generateMockTerminals = (count) => {
       lng: jitterLng,
       city: city.name,
       status: "active",
-      services: VAS_OPTIONS.map((vas) => ({
-        name: vas,
-        enabled: Math.random() > 0.5
-      }))
+      services: VAS_OPTIONS.map((vas) => ({ name: vas, enabled: Math.random() > 0.5 }))
     };
 
     if (!terminalsByCity[city.name]) terminalsByCity[city.name] = [];
@@ -71,7 +70,6 @@ const getTerminalIcon = (bank, status) => {
     "westpac": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvqbwpn54NEQrAqBSLP-pJnPcCvU6BtTpt8A&s",
     "cba": "https://www.commbank.com.au/content/dam/caas/newsroom/images/Smart_terminal_1.jpg"
   };
-
   const statusClass = status === "active" ? "green-status" : "red-status";
   const lowerBank = bank.toLowerCase();
 
@@ -130,54 +128,25 @@ function App() {
 
   if (!authenticated) {
     return (
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        backgroundColor: "#f5f5f5"
-      }}>
-        <div style={{
-          background: "white",
-          padding: "2rem",
-          borderRadius: "8px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          width: "350px",
-          textAlign: "center"
-        }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#034043" }}>
+        <div style={{ background: "white", padding: "2rem", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", width: "350px", textAlign: "center" }}>
+          <img src={LinklyLogo} alt="Linkly Logo" style={{ width: "140px", marginBottom: "1rem" }} />
+          <img src={OrbitLogo} alt="Orbit Logo" style={{ width: "100px", marginBottom: "1.5rem" }} />
           <h2 style={{ marginBottom: "1.5rem", color: "#333" }}>Terminal Management System</h2>
           <p style={{ marginBottom: "1.5rem", color: "#666" }}>Please enter the password to access the system</p>
-          
           <form onSubmit={handleLogin}>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                marginBottom: "1rem",
-                border: `1px solid ${error ? "#ff4444" : "#ddd"}`,
-                borderRadius: "4px",
-                fontSize: "1rem"
-              }}
+              style={{ width: "100%", padding: "0.75rem", marginBottom: "1rem", border: `1px solid ${error ? "#ff4444" : "#ddd"}`, borderRadius: "4px", fontSize: "1rem" }}
               placeholder="Enter password"
               autoFocus
             />
             {error && <p style={{ color: "#ff4444", marginBottom: "1rem" }}>{error}</p>}
             <button
               type="submit"
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                backgroundColor: "#4CAF50",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                fontSize: "1rem",
-                cursor: "pointer",
-                transition: "background-color 0.3s"
-              }}
+              style={{ width: "100%", padding: "0.75rem", backgroundColor: "#4CAF50", color: "white", border: "none", borderRadius: "4px", fontSize: "1rem", cursor: "pointer" }}
               onMouseOver={(e) => e.target.style.backgroundColor = "#45a049"}
               onMouseOut={(e) => e.target.style.backgroundColor = "#4CAF50"}
             >
@@ -189,155 +158,214 @@ function App() {
     );
   }
 
+  // --- Post-login layout is inserted here ---
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: 'Helvetica Neue, sans-serif' }}>
-      <div style={{ width: "340px", background: "white", color: "#111", padding: "2rem 1.5rem", overflowY: "auto", boxShadow: "2px 0 8px rgba(0,0,0,0.05)" }}>
-        <h2 style={{ marginBottom: "1.5rem", fontSize: "1.75rem", fontWeight: 600 }}>Terminal Filters</h2>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh",
+        backgroundColor: "#034043",
+        color: "#fff",
+        fontFamily: 'Helvetica Neue, sans-serif'
+      }}>
+        {/* HEADER */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1.5rem 2rem",
+          borderBottom: "1px solid rgba(255,255,255,0.1)",
+          position: "relative"
+        }}>
 
-        <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Bank</label>
-        <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '10rem', overflowY: 'auto' }}>
-          {[...new Set(data.map(d => d.bank))].map((b, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-              <input
-                type="checkbox"
-                id={`bank-${i}`}
-                value={b}
-                checked={selectedBanks.includes(b)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedBanks([...selectedBanks, b]);
-                  } else {
-                    setSelectedBanks(selectedBanks.filter(bank => bank !== b));
-                  }
-                }}
-              />
-              <label htmlFor={`bank-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{b}</label>
-            </div>
-          ))}
+          {/* Centered Linkly logo */}
+          <img src={LinklyLogo} alt="Linkly Logo" style={{
+            height: "80px"
+          }} />
         </div>
 
-        <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Value-Added Service</label>
-        <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '12rem', overflowY: 'auto' }}>
-          {VAS_OPTIONS.map((v, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-              <input
-                type="checkbox"
-                id={`vas-${i}`}
-                value={v}
-                checked={selectedVASOptions.includes(v)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedVASOptions([...selectedVASOptions, v]);
-                  } else {
-                    setSelectedVASOptions(selectedVASOptions.filter(val => val !== v));
-                  }
-                }}
-              />
-              <label htmlFor={`vas-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{v}</label>
-            </div>
-          ))}
-        </div>
 
-        <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Status</label>
-        <div style={{ marginBottom: '2rem' }}>
-          <div style={{ marginBottom: '4px' }}>
-            <input
-              type="radio"
-              id="status-all"
-              name="status"
-              value="all"
-              checked={statusFilter === "all"}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            />
-            <label htmlFor="status-all" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>All</label>
-          </div>
-          <div style={{ marginBottom: '4px' }}>
-            <input
-              type="radio"
-              id="status-active"
-              name="status"
-              value="active"
-              checked={statusFilter === "active"}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            />
-            <label htmlFor="status-active" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Online</label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="status-offline"
-              name="status"
-              value="offline"
-              checked={statusFilter === "offline"}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            />
-            <label htmlFor="status-offline" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Offline</label>
-          </div>
-        </div>
+        {/* MAIN LAYOUT */}
+        <div style={{ display: "flex", flex: 1 }}>
+          
+          {/* FILTER PANEL */}
+<div style={{
+  width: "300px",
+  backgroundColor: "#034043",
+  borderRight: "1px solid rgba(255,255,255,0.1)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  paddingTop: "2rem"
+}}>
+  {/* Orbit logo centered */}
+  <img src={OrbitLogo} alt="Orbit Logo" style={{ height: "80px", marginBottom: "1.5rem" }} />
 
-        {selectedTerminal && (
-          <div style={{ marginTop: "1rem" }}>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: 600 }}>{selectedTerminal.merchant}</h3>
-            <p style={{ fontSize: "0.9rem", marginBottom: "0.25rem" }}><em>{selectedTerminal.bank} — Terminal #{selectedTerminal.id}</em></p>
-            <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
-              Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <span style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: selectedTerminal.status === 'active' ? 'green' : 'red',
-                  display: 'inline-block',
-                  marginRight: '6px'
-                }}></span>
-                <strong>{selectedTerminal.status === 'active' ? 'Online' : 'Offline'}</strong>
-              </span>
-            </p>
-            <hr />
-            {selectedTerminal.services.map((s, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0.5rem 0" }}>
-                <label style={{ fontSize: "0.875rem" }}>{s.name}</label>
-                <input
-                  type="checkbox"
-                  checked={s.enabled}
-                  onChange={() => toggleVAS(selectedTerminal.id, s.name)}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+  {/* Filters scrollable container */}
+  <div style={{ width: "100%", padding: "0 1.5rem", overflowY: "auto", flex: 1 }}>
+    <h2 style={{ marginBottom: "1.5rem", fontSize: "1.5rem", fontWeight: 600, color: "#fff" }}>Terminal Filters</h2>
 
-      <div style={{ flex: 1 }}>
-        <MapContainer center={[-25.2744, 133.7751]} zoom={4} style={{ height: "100%", width: "100%" }}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
+    {/* ✅ Everything below stays inside this container */}
+
+    <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Bank</label>
+    <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '10rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
+      {[...new Set(data.map(d => d.bank))].map((b, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+          <input
+            type="checkbox"
+            id={`bank-${i}`}
+            value={b}
+            checked={selectedBanks.includes(b)}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedBanks([...selectedBanks, b]);
+              } else {
+                setSelectedBanks(selectedBanks.filter(bank => bank !== b));
+              }
+            }}
           />
-          {filteredData.map((t) => (
-            <Marker key={t.id} position={[t.lat, t.lng]} icon={getTerminalIcon(t.bank, t.status)} eventHandlers={{
-              click: () => setSelectedTerminal(t)
-            }}>
-              <Popup>
-                <strong>{t.merchant}</strong><br /><em>{t.bank} – Terminal #{t.id}</em>
-                <br />
-                Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  <span style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: t.status === 'active' ? 'green' : 'red',
-                    display: 'inline-block',
-                    marginRight: '6px'
-                  }}></span>
-                  <strong>{t.status === 'active' ? 'Online' : 'Offline'}</strong>
-                </span>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+          <label htmlFor={`bank-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{b}</label>
+        </div>
+      ))}
+    </div>
+
+    <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Value-Added Service</label>
+    <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '12rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
+      {VAS_OPTIONS.map((v, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+          <input
+            type="checkbox"
+            id={`vas-${i}`}
+            value={v}
+            checked={selectedVASOptions.includes(v)}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedVASOptions([...selectedVASOptions, v]);
+              } else {
+                setSelectedVASOptions(selectedVASOptions.filter(val => val !== v));
+              }
+            }}
+          />
+          <label htmlFor={`vas-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{v}</label>
+        </div>
+      ))}
+    </div>
+
+    <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Status</label>
+    <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '4px' }}>
+        <input
+          type="radio"
+          id="status-all"
+          name="status"
+          value="all"
+          checked={statusFilter === "all"}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        />
+        <label htmlFor="status-all" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>All</label>
+      </div>
+      <div style={{ marginBottom: '4px' }}>
+        <input
+          type="radio"
+          id="status-active"
+          name="status"
+          value="active"
+          checked={statusFilter === "active"}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        />
+        <label htmlFor="status-active" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Online</label>
+      </div>
+      <div>
+        <input
+          type="radio"
+          id="status-offline"
+          name="status"
+          value="offline"
+          checked={statusFilter === "offline"}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        />
+        <label htmlFor="status-offline" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Offline</label>
       </div>
     </div>
-  );
+
+    {selectedTerminal && (
+      <div style={{ marginTop: "1rem" }}>
+        <h3 style={{ fontSize: "1.2rem", fontWeight: 600 }}>{selectedTerminal.merchant}</h3>
+        <p style={{ fontSize: "0.9rem", marginBottom: "0.25rem" }}><em>{selectedTerminal.bank} — Terminal #{selectedTerminal.id}</em></p>
+        <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
+          Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <span style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: selectedTerminal.status === 'active' ? 'green' : 'red',
+              display: 'inline-block',
+              marginRight: '6px'
+            }}></span>
+            <strong>{selectedTerminal.status === 'active' ? 'Online' : 'Offline'}</strong>
+          </span>
+        </p>
+        <hr />
+        {selectedTerminal.services.map((s, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0.5rem 0" }}>
+            <label style={{ fontSize: "0.875rem" }}>{s.name}</label>
+            <input
+              type="checkbox"
+              checked={s.enabled}
+              onChange={() => toggleVAS(selectedTerminal.id, s.name)}
+            />
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+    
+          {/* MAP */}
+          <div style={{ flex: 1 }}>
+            <MapContainer center={[-25.2744, 133.7751]} zoom={4} style={{ height: "100%", width: "100%" }}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
+              />
+              {filteredData.map((t) => (
+                <Marker key={t.id} position={[t.lat, t.lng]} icon={getTerminalIcon(t.bank, t.status)} eventHandlers={{
+                  click: () => setSelectedTerminal(t)
+                }}>
+                  <Popup>
+                    <strong>{t.merchant}</strong><br /><em>{t.bank} – Terminal #{t.id}</em><br />
+                    Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      <span style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: t.status === 'active' ? 'green' : 'red',
+                        display: 'inline-block',
+                        marginRight: '6px'
+                      }}></span>
+                      <strong>{t.status === 'active' ? 'Online' : 'Offline'}</strong>
+                    </span>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
+    
+          {/* INSIGHTS PANEL */}
+          <div style={{
+            width: "300px",
+            padding: "1.5rem",
+            backgroundColor: "#034043",
+            borderLeft: "1px solid rgba(255,255,255,0.1)",
+            color: "#fff"
+          }}>
+            <h3 style={{ borderBottom: "1px solid #fff", paddingBottom: "0.5rem" }}>PAYMENT INSIGHTS</h3>
+            <p style={{ marginTop: "1rem" }}>[Click terminal or select from filter]</p>
+            <p style={{ fontStyle: "italic" }}>(Analysis Outputs)</p>
+          </div>
+        </div>
+      </div>
+    );
 }
 
 export default App;
