@@ -5,6 +5,19 @@ import L from "leaflet";
 import "./App.css";
 import OrbitLogo from "./assets/orbit-logo.png";
 import LinklyLogo from "./assets/linkly-logo.png";
+import { 
+  LineChart, 
+  Line, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from 'recharts';
+import { format, subDays } from 'date-fns';
 
 const PASSWORD = "i00t#GG3Fzfe";
 
@@ -80,6 +93,58 @@ const getTerminalIcon = (bank, status) => {
     popupAnchor: [0, -30],
     className: `rounded-terminal-icon ${statusClass}`
   });
+};
+
+const generateTerminalInsights = (terminalId) => {
+  // Generate transaction data for last 30 days
+  const transactionData = Array.from({ length: 30 }, (_, i) => {
+    const date = subDays(new Date(), 30 - i);
+    return {
+      date: format(date, 'MMM dd'),
+      volume: Math.floor(Math.random() * 10000) + 1000,
+      value: Math.floor(Math.random() * 50000) + 5000,
+    };
+  });
+
+  // Generate uptime data (hourly status for last 7 days)
+  const uptimeData = Array.from({ length: 24 * 7 }, (_, i) => {
+    const date = subDays(new Date(), 7 - Math.floor(i / 24));
+    const hour = i % 24;
+    return {
+      date: format(date, 'MMM dd'),
+      hour,
+      status: Math.random() > 0.05 ? 'online' : 'offline' // 5% chance of being offline
+    };
+  });
+
+  // Calculate uptime percentage
+  const totalHours = uptimeData.length;
+  const onlineHours = uptimeData.filter(d => d.status === 'online').length;
+  const uptimePercent = Math.round((onlineHours / totalHours) * 100);
+
+  // Calculate key metrics
+  const totalVolume = transactionData.reduce((sum, day) => sum + day.volume, 0);
+  const totalValue = transactionData.reduce((sum, day) => sum + day.value, 0);
+  const approvalRate = Math.floor(Math.random() * 10) + 90; // 90-99%
+  const lastSeen = format(new Date(), 'MMM dd, h:mm a');
+  
+  // Get most used VAS feature
+  const vasFeatures = VAS_OPTIONS.map(vas => ({
+    name: vas,
+    count: Math.floor(Math.random() * 100)
+  }));
+  const topVAS = [...vasFeatures].sort((a, b) => b.count - a.count)[0].name;
+
+  return {
+    transactionData,
+    uptimeData,
+    uptimePercent,
+    totalVolume,
+    totalValue,
+    approvalRate,
+    lastSeen,
+    topVAS
+  };
 };
 
 function App() {
@@ -158,214 +223,357 @@ function App() {
     );
   }
 
-  // --- Post-login layout is inserted here ---
   return (
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      height: "100vh",
+      backgroundColor: "#034043",
+      color: "#fff",
+      fontFamily: 'Helvetica Neue, sans-serif'
+    }}>
+      {/* HEADER */}
       <div style={{
         display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        backgroundColor: "#034043",
-        color: "#fff",
-        fontFamily: 'Helvetica Neue, sans-serif'
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1.5rem 2rem",
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        position: "relative"
       }}>
-        {/* HEADER */}
+        <img src={LinklyLogo} alt="Linkly Logo" style={{
+          height: "80px"
+        }} />
+      </div>
+
+      {/* MAIN LAYOUT */}
+      <div style={{ display: "flex", flex: 1 }}>
+        
+        {/* FILTER PANEL */}
         <div style={{
+          width: "300px",
+          backgroundColor: "#034043",
+          borderRight: "1px solid rgba(255,255,255,0.1)",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
-          padding: "1.5rem 2rem",
-          borderBottom: "1px solid rgba(255,255,255,0.1)",
-          position: "relative"
+          paddingTop: "2rem"
         }}>
+          <img src={OrbitLogo} alt="Orbit Logo" style={{ height: "80px", marginBottom: "1.5rem" }} />
 
-          {/* Centered Linkly logo */}
-          <img src={LinklyLogo} alt="Linkly Logo" style={{
-            height: "80px"
-          }} />
-        </div>
+          <div style={{ width: "100%", padding: "0 1.5rem", overflowY: "auto", flex: 1 }}>
+            <h2 style={{ marginBottom: "1.5rem", fontSize: "1.5rem", fontWeight: 600, color: "#fff" }}>Terminal Filters</h2>
 
-
-        {/* MAIN LAYOUT */}
-        <div style={{ display: "flex", flex: 1 }}>
-          
-          {/* FILTER PANEL */}
-<div style={{
-  width: "300px",
-  backgroundColor: "#034043",
-  borderRight: "1px solid rgba(255,255,255,0.1)",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  paddingTop: "2rem"
-}}>
-  {/* Orbit logo centered */}
-  <img src={OrbitLogo} alt="Orbit Logo" style={{ height: "80px", marginBottom: "1.5rem" }} />
-
-  {/* Filters scrollable container */}
-  <div style={{ width: "100%", padding: "0 1.5rem", overflowY: "auto", flex: 1 }}>
-    <h2 style={{ marginBottom: "1.5rem", fontSize: "1.5rem", fontWeight: 600, color: "#fff" }}>Terminal Filters</h2>
-
-    {/* ✅ Everything below stays inside this container */}
-
-    <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Bank</label>
-    <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '10rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
-      {[...new Set(data.map(d => d.bank))].map((b, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-          <input
-            type="checkbox"
-            id={`bank-${i}`}
-            value={b}
-            checked={selectedBanks.includes(b)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setSelectedBanks([...selectedBanks, b]);
-              } else {
-                setSelectedBanks(selectedBanks.filter(bank => bank !== b));
-              }
-            }}
-          />
-          <label htmlFor={`bank-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{b}</label>
-        </div>
-      ))}
-    </div>
-
-    <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Value-Added Service</label>
-    <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '12rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
-      {VAS_OPTIONS.map((v, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-          <input
-            type="checkbox"
-            id={`vas-${i}`}
-            value={v}
-            checked={selectedVASOptions.includes(v)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setSelectedVASOptions([...selectedVASOptions, v]);
-              } else {
-                setSelectedVASOptions(selectedVASOptions.filter(val => val !== v));
-              }
-            }}
-          />
-          <label htmlFor={`vas-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{v}</label>
-        </div>
-      ))}
-    </div>
-
-    <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Status</label>
-    <div style={{ marginBottom: '2rem' }}>
-      <div style={{ marginBottom: '4px' }}>
-        <input
-          type="radio"
-          id="status-all"
-          name="status"
-          value="all"
-          checked={statusFilter === "all"}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        />
-        <label htmlFor="status-all" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>All</label>
-      </div>
-      <div style={{ marginBottom: '4px' }}>
-        <input
-          type="radio"
-          id="status-active"
-          name="status"
-          value="active"
-          checked={statusFilter === "active"}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        />
-        <label htmlFor="status-active" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Online</label>
-      </div>
-      <div>
-        <input
-          type="radio"
-          id="status-offline"
-          name="status"
-          value="offline"
-          checked={statusFilter === "offline"}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        />
-        <label htmlFor="status-offline" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Offline</label>
-      </div>
-    </div>
-
-    {selectedTerminal && (
-      <div style={{ marginTop: "1rem" }}>
-        <h3 style={{ fontSize: "1.2rem", fontWeight: 600 }}>{selectedTerminal.merchant}</h3>
-        <p style={{ fontSize: "0.9rem", marginBottom: "0.25rem" }}><em>{selectedTerminal.bank} — Terminal #{selectedTerminal.id}</em></p>
-        <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
-          Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-            <span style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: selectedTerminal.status === 'active' ? 'green' : 'red',
-              display: 'inline-block',
-              marginRight: '6px'
-            }}></span>
-            <strong>{selectedTerminal.status === 'active' ? 'Online' : 'Offline'}</strong>
-          </span>
-        </p>
-        <hr />
-        {selectedTerminal.services.map((s, i) => (
-          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0.5rem 0" }}>
-            <label style={{ fontSize: "0.875rem" }}>{s.name}</label>
-            <input
-              type="checkbox"
-              checked={s.enabled}
-              onChange={() => toggleVAS(selectedTerminal.id, s.name)}
-            />
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
-    
-          {/* MAP */}
-          <div style={{ flex: 1 }}>
-            <MapContainer center={[-25.2744, 133.7751]} zoom={4} style={{ height: "100%", width: "100%" }}>
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; OpenStreetMap contributors"
-              />
-              {filteredData.map((t) => (
-                <Marker key={t.id} position={[t.lat, t.lng]} icon={getTerminalIcon(t.bank, t.status)} eventHandlers={{
-                  click: () => setSelectedTerminal(t)
-                }}>
-                  <Popup>
-                    <strong>{t.merchant}</strong><br /><em>{t.bank} – Terminal #{t.id}</em><br />
-                    Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                      <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: t.status === 'active' ? 'green' : 'red',
-                        display: 'inline-block',
-                        marginRight: '6px'
-                      }}></span>
-                      <strong>{t.status === 'active' ? 'Online' : 'Offline'}</strong>
-                    </span>
-                  </Popup>
-                </Marker>
+            <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Bank</label>
+            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '10rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
+              {[...new Set(data.map(d => d.bank))].map((b, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                  <input
+                    type="checkbox"
+                    id={`bank-${i}`}
+                    value={b}
+                    checked={selectedBanks.includes(b)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedBanks([...selectedBanks, b]);
+                      } else {
+                        setSelectedBanks(selectedBanks.filter(bank => bank !== b));
+                      }
+                    }}
+                  />
+                  <label htmlFor={`bank-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{b}</label>
+                </div>
               ))}
-            </MapContainer>
-          </div>
-    
-          {/* INSIGHTS PANEL */}
-          <div style={{
-            width: "300px",
-            padding: "1.5rem",
-            backgroundColor: "#034043",
-            borderLeft: "1px solid rgba(255,255,255,0.1)",
-            color: "#fff"
-          }}>
-            <h3 style={{ borderBottom: "1px solid #fff", paddingBottom: "0.5rem" }}>PAYMENT INSIGHTS</h3>
-            <p style={{ marginTop: "1rem" }}>[Click terminal or select from filter]</p>
-            <p style={{ fontStyle: "italic" }}>(Analysis Outputs)</p>
+            </div>
+
+            <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Value-Added Service</label>
+            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '12rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
+              {VAS_OPTIONS.map((v, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                  <input
+                    type="checkbox"
+                    id={`vas-${i}`}
+                    value={v}
+                    checked={selectedVASOptions.includes(v)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedVASOptions([...selectedVASOptions, v]);
+                      } else {
+                        setSelectedVASOptions(selectedVASOptions.filter(val => val !== v));
+                      }
+                    }}
+                  />
+                  <label htmlFor={`vas-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{v}</label>
+                </div>
+              ))}
+            </div>
+
+            <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Status</label>
+            <div style={{ marginBottom: '2rem' }}>
+              <div style={{ marginBottom: '4px' }}>
+                <input
+                  type="radio"
+                  id="status-all"
+                  name="status"
+                  value="all"
+                  checked={statusFilter === "all"}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                />
+                <label htmlFor="status-all" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>All</label>
+              </div>
+              <div style={{ marginBottom: '4px' }}>
+                <input
+                  type="radio"
+                  id="status-active"
+                  name="status"
+                  value="active"
+                  checked={statusFilter === "active"}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                />
+                <label htmlFor="status-active" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Online</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id="status-offline"
+                  name="status"
+                  value="offline"
+                  checked={statusFilter === "offline"}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                />
+                <label htmlFor="status-offline" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Offline</label>
+              </div>
+            </div>
+
+            {selectedTerminal && (
+              <div style={{ marginTop: "1rem" }}>
+                <h3 style={{ fontSize: "1.2rem", fontWeight: 600 }}>{selectedTerminal.merchant}</h3>
+                <p style={{ fontSize: "0.9rem", marginBottom: "0.25rem" }}><em>{selectedTerminal.bank} — Terminal #{selectedTerminal.id}</em></p>
+                <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
+                  Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <span style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: selectedTerminal.status === 'active' ? 'green' : 'red',
+                      display: 'inline-block',
+                      marginRight: '6px'
+                    }}></span>
+                    <strong>{selectedTerminal.status === 'active' ? 'Online' : 'Offline'}</strong>
+                  </span>
+                </p>
+                <hr />
+                {selectedTerminal.services.map((s, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0.5rem 0" }}>
+                    <label style={{ fontSize: "0.875rem" }}>{s.name}</label>
+                    <input
+                      type="checkbox"
+                      checked={s.enabled}
+                      onChange={() => toggleVAS(selectedTerminal.id, s.name)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
+        
+        {/* MAP */}
+        <div style={{ flex: 1 }}>
+          <MapContainer center={[-25.2744, 133.7751]} zoom={4} style={{ height: "100%", width: "100%" }}>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+            {filteredData.map((t) => (
+              <Marker key={t.id} position={[t.lat, t.lng]} icon={getTerminalIcon(t.bank, t.status)} eventHandlers={{
+                click: () => setSelectedTerminal(t)
+              }}>
+                <Popup>
+                  <strong>{t.merchant}</strong><br /><em>{t.bank} – Terminal #{t.id}</em><br />
+                  Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <span style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: t.status === 'active' ? 'green' : 'red',
+                      display: 'inline-block',
+                      marginRight: '6px'
+                    }}></span>
+                    <strong>{t.status === 'active' ? 'Online' : 'Offline'}</strong>
+                  </span>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        </div>
+        
+        {/* INSIGHTS PANEL */}
+        <div style={{
+          width: "350px",
+          padding: "1.5rem",
+          backgroundColor: "#034043",
+          borderLeft: "1px solid rgba(255,255,255,0.1)",
+          color: "#fff",
+          overflowY: "auto"
+        }}>
+          {selectedTerminal ? (
+            <div>
+              <h3 style={{ 
+                borderBottom: "1px solid rgba(255,255,255,0.3)", 
+                paddingBottom: "0.5rem",
+                marginBottom: "1.5rem"
+              }}>
+                TERMINAL #{selectedTerminal.id} INSIGHTS
+              </h3>
+              
+              {/* Transaction Volume Chart */}
+              <div style={{ marginBottom: "2rem" }}>
+                <h4 style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center" }}>
+                  📊 Transaction Volume (30 days)
+                </h4>
+                <div style={{ height: "250px" }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={generateTerminalInsights(selectedTerminal.id).transactionData}
+                      margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#4a6b7b" />
+                      <XAxis dataKey="date" tick={{ fill: '#fff' }} />
+                      <YAxis tick={{ fill: '#fff' }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: '#034043',
+                          borderColor: '#4a6b7b',
+                          color: '#fff'
+                        }}
+                      />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="volume" 
+                        name="Transactions" 
+                        stroke="#8884d8" 
+                        activeDot={{ r: 8 }} 
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="value" 
+                        name="Value ($)" 
+                        stroke="#82ca9d" 
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              
+              {/* Uptime Status */}
+              <div style={{ marginBottom: "2rem" }}>
+                <h4 style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center" }}>
+                  📈 Uptime Status (7 days)
+                  <span style={{ 
+                    marginLeft: "auto", 
+                    backgroundColor: "#4a6b7b",
+                    padding: "0.25rem 0.5rem",
+                    borderRadius: "4px",
+                    fontSize: "0.8rem"
+                  }}>
+                    {generateTerminalInsights(selectedTerminal.id).uptimePercent}% uptime
+                  </span>
+                </h4>
+                <div style={{ 
+                  display: "flex", 
+                  flexWrap: "wrap",
+                  gap: "2px",
+                  marginBottom: "0.5rem"
+                }}>
+                  {Array.from({ length: 24 * 7 }).map((_, i) => {
+                    const status = generateTerminalInsights(selectedTerminal.id).uptimeData[i].status;
+                    return (
+                      <div 
+                        key={i}
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          backgroundColor: status === 'online' ? '#4CAF50' : '#f44336',
+                          borderRadius: "2px"
+                        }}
+                        title={`Hour ${i % 24} on day ${Math.floor(i / 24)}`}
+                      />
+                    );
+                  })}
+                </div>
+                <div style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between",
+                  fontSize: "0.8rem",
+                  color: "#aaa"
+                }}>
+                  <span>7 days ago</span>
+                  <span>Now</span>
+                </div>
+              </div>
+              
+              {/* Key Metrics */}
+              <div>
+                <h4 style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center" }}>
+                  🔢 Key Metrics
+                </h4>
+                <div style={{ 
+                  backgroundColor: "rgba(255,255,255,0.05)",
+                  borderRadius: "8px",
+                  padding: "1rem"
+                }}>
+                  <div style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "1rem"
+                  }}>
+                    <div>
+                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Total Volume</div>
+                      <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
+                        {generateTerminalInsights(selectedTerminal.id).totalVolume.toLocaleString()}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Approval %</div>
+                      <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
+                        {generateTerminalInsights(selectedTerminal.id).approvalRate}%
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Last Seen</div>
+                      <div style={{ fontSize: "1rem", fontWeight: "bold" }}>
+                        {generateTerminalInsights(selectedTerminal.id).lastSeen}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Top VAS</div>
+                      <div style={{ fontSize: "1rem", fontWeight: "bold" }}>
+                        {generateTerminalInsights(selectedTerminal.id).topVAS}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center",
+              height: "100%",
+              textAlign: "center"
+            }}>
+              <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>📊</div>
+              <p>Select a terminal from the map or filter panel to view detailed analytics and metrics.</p>
+            </div>
+          )}
+        </div>
       </div>
-    );
+    </div>
+  );
 }
 
 export default App;
