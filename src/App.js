@@ -94,7 +94,6 @@ const getTerminalIcon = (bank, status) => {
 };
 
 const generateTerminalInsights = (terminalId) => {
-  // Generate transaction data for last 30 days
   const transactionData = Array.from({ length: 30 }, (_, i) => {
     const date = subDays(new Date(), 30 - i);
     return {
@@ -104,29 +103,25 @@ const generateTerminalInsights = (terminalId) => {
     };
   });
 
-  // Generate uptime data (hourly status for last 7 days)
   const uptimeData = Array.from({ length: 24 * 7 }, (_, i) => {
     const date = subDays(new Date(), 7 - Math.floor(i / 24));
     const hour = i % 24;
     return {
       date: format(date, 'MMM dd'),
       hour,
-      status: Math.random() > 0.05 ? 'online' : 'offline' // 5% chance of being offline
+      status: Math.random() > 0.05 ? 'online' : 'offline'
     };
   });
 
-  // Calculate uptime percentage
   const totalHours = uptimeData.length;
   const onlineHours = uptimeData.filter(d => d.status === 'online').length;
   const uptimePercent = Math.round((onlineHours / totalHours) * 100);
 
-  // Calculate key metrics
   const totalVolume = transactionData.reduce((sum, day) => sum + day.volume, 0);
   const totalValue = transactionData.reduce((sum, day) => sum + day.value, 0);
-  const approvalRate = Math.floor(Math.random() * 10) + 90; // 90-99%
+  const approvalRate = Math.floor(Math.random() * 10) + 90;
   const lastSeen = format(new Date(), 'MMM dd, h:mm a');
   
-  // Get most used VAS feature
   const vasFeatures = VAS_OPTIONS.map(vas => ({
     name: vas,
     count: Math.floor(Math.random() * 100)
@@ -152,8 +147,9 @@ function App() {
   const [data, setData] = useState(terminals);
   const [selectedBanks, setSelectedBanks] = useState([]);
   const [selectedVASOptions, setSelectedVASOptions] = useState([]);
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedTerminal, setSelectedTerminal] = useState(null);
+  const [terminalInsights, setTerminalInsights] = useState({});
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -169,10 +165,10 @@ function App() {
     return data.filter((t) => {
       const bankMatch = selectedBanks.length === 0 || selectedBanks.includes(t.bank);
       const vasMatch = selectedVASOptions.length === 0 || selectedVASOptions.every(v => t.services.some(s => s.name === v && s.enabled));
-      const statusMatch = statusFilter === "all" || t.status === statusFilter;
+      const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(t.status);
       return bankMatch && vasMatch && statusMatch;
     });
-  }, [data, selectedBanks, selectedVASOptions, statusFilter]);
+  }, [data, selectedBanks, selectedVASOptions, selectedStatuses]);
 
   const toggleVAS = (terminalId, vasName) => {
     setData((prev) =>
@@ -189,30 +185,36 @@ function App() {
     );
   };
 
+  const handleTerminalSelect = (terminal) => {
+    setSelectedTerminal(terminal);
+    // Cache the insights data for this terminal
+    if (!terminalInsights[terminal.id]) {
+      setTerminalInsights(prev => ({
+        ...prev,
+        [terminal.id]: generateTerminalInsights(terminal.id)
+      }));
+    }
+  };
+
   if (!authenticated) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#034043" }}>
-        <div style={{ background: "white", padding: "2rem", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", width: "350px", textAlign: "center" }}>
-          <img src={LinklyLogo} alt="Linkly Logo" style={{ width: "140px", marginBottom: "1rem" }} />
-          <img src={OrbitLogo} alt="Orbit Logo" style={{ width: "100px", marginBottom: "1.5rem" }} />
-          <h2 style={{ marginBottom: "1.5rem", color: "#333" }}>Terminal Management System</h2>
-          <p style={{ marginBottom: "1.5rem", color: "#666" }}>Please enter the password to access the system</p>
+      <div className="login-container">
+        <div className="login-box">
+          <img src={LinklyLogo} alt="Linkly Logo" className="login-logo" />
+          <img src={OrbitLogo} alt="Orbit Logo" className="login-orbit-logo" />
+          <h2>Terminal Management System</h2>
+          <p>Please enter the password to access the system</p>
           <form onSubmit={handleLogin}>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "100%", padding: "0.75rem", marginBottom: "1rem", border: `1px solid ${error ? "#ff4444" : "#ddd"}`, borderRadius: "4px", fontSize: "1rem" }}
+              className={`login-input ${error ? 'error' : ''}`}
               placeholder="Enter password"
               autoFocus
             />
-            {error && <p style={{ color: "#ff4444", marginBottom: "1rem" }}>{error}</p>}
-            <button
-              type="submit"
-              style={{ width: "100%", padding: "0.75rem", backgroundColor: "#4CAF50", color: "white", border: "none", borderRadius: "4px", fontSize: "1rem", cursor: "pointer" }}
-              onMouseOver={(e) => e.target.style.backgroundColor = "#45a049"}
-              onMouseOut={(e) => e.target.style.backgroundColor = "#4CAF50"}
-            >
+            {error && <p className="error-message">{error}</p>}
+            <button type="submit" className="login-button">
               Unlock
             </button>
           </form>
@@ -222,50 +224,26 @@ function App() {
   }
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      height: "100vh",
-      backgroundColor: "#034043",
-      color: "#fff",
-      fontFamily: 'Helvetica Neue, sans-serif'
-    }}>
+    <div className="app-container">
       {/* HEADER */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1.5rem 2rem",
-        borderBottom: "1px solid rgba(255,255,255,0.1)",
-        position: "relative"
-      }}>
-        <img src={LinklyLogo} alt="Linkly Logo" style={{
-          height: "80px"
-        }} />
-      </div>
+      <header className="app-header">
+        <img src={LinklyLogo} alt="Linkly Logo" className="header-logo" />
+      </header>
 
       {/* MAIN LAYOUT */}
-      <div style={{ display: "flex", flex: 1 }}>
-        
-        {/* FILTER PANEL */}
-        <div style={{
-          width: "300px",
-          backgroundColor: "#034043",
-          borderRight: "1px solid rgba(255,255,255,0.1)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          paddingTop: "2rem"
-        }}>
-          <img src={OrbitLogo} alt="Orbit Logo" style={{ height: "80px", marginBottom: "1.5rem" }} />
-
-          <div style={{ width: "100%", padding: "0 1.5rem", overflowY: "auto", flex: 1 }}>
-            <h2 style={{ marginBottom: "1.5rem", fontSize: "1.5rem", fontWeight: 600, color: "#fff" }}>Terminal Filters</h2>
-
-            <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Bank</label>
-            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '10rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
+      <div className="main-content">
+        {/* LEFT PANEL - FILTERS */}
+        <div className="left-panel">
+          <div className="panel-header">
+            <img src={OrbitLogo} alt="Orbit Logo" className="orbit-logo" />
+            <h2>Terminal Filters</h2>
+          </div>
+          
+          <div className="filter-section">
+            <label>Bank</label>
+            <div className="filter-box bank-filter">
               {[...new Set(data.map(d => d.bank))].map((b, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+                <div key={i} className="filter-item">
                   <input
                     type="checkbox"
                     id={`bank-${i}`}
@@ -279,163 +257,136 @@ function App() {
                       }
                     }}
                   />
-                  <label htmlFor={`bank-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{b}</label>
+                  <label htmlFor={`bank-${i}`}>{b}</label>
                 </div>
               ))}
             </div>
+          </div>
 
-            <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Value-Added Service</label>
-            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '0.5rem', marginBottom: '1rem', maxHeight: '12rem', overflowY: 'auto', background: "#fff", color: "#000" }}>
-              {VAS_OPTIONS.map((v, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+          <div className="filter-section">
+            <label>VAS Options</label>
+            <div className="filter-box vas-filter">
+              {VAS_OPTIONS.map((vas, i) => (
+                <div key={i} className="filter-item">
                   <input
                     type="checkbox"
                     id={`vas-${i}`}
-                    value={v}
-                    checked={selectedVASOptions.includes(v)}
+                    value={vas}
+                    checked={selectedVASOptions.includes(vas)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedVASOptions([...selectedVASOptions, v]);
+                        setSelectedVASOptions([...selectedVASOptions, vas]);
                       } else {
-                        setSelectedVASOptions(selectedVASOptions.filter(val => val !== v));
+                        setSelectedVASOptions(selectedVASOptions.filter(v => v !== vas));
                       }
                     }}
                   />
-                  <label htmlFor={`vas-${i}`} style={{ marginLeft: '8px', fontSize: '0.9rem' }}>{v}</label>
+                  <label htmlFor={`vas-${i}`}>{vas}</label>
                 </div>
               ))}
             </div>
+          </div>
 
-            <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Status</label>
-            <div style={{ marginBottom: '2rem' }}>
-              <div style={{ marginBottom: '4px' }}>
+          <div className="filter-section">
+            <label>Status</label>
+            <div className="filter-box">
+              <div className="filter-item">
                 <input
-                  type="radio"
-                  id="status-all"
-                  name="status"
-                  value="all"
-                  checked={statusFilter === "all"}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                />
-                <label htmlFor="status-all" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>All</label>
-              </div>
-              <div style={{ marginBottom: '4px' }}>
-                <input
-                  type="radio"
+                  type="checkbox"
                   id="status-active"
-                  name="status"
                   value="active"
-                  checked={statusFilter === "active"}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  checked={selectedStatuses.includes("active")}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedStatuses([...selectedStatuses, "active"]);
+                    } else {
+                      setSelectedStatuses(selectedStatuses.filter(s => s !== "active"));
+                    }
+                  }}
                 />
-                <label htmlFor="status-active" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Online</label>
+                <label htmlFor="status-active">Online</label>
               </div>
-              <div>
+              <div className="filter-item">
                 <input
-                  type="radio"
+                  type="checkbox"
                   id="status-offline"
-                  name="status"
                   value="offline"
-                  checked={statusFilter === "offline"}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  checked={selectedStatuses.includes("offline")}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedStatuses([...selectedStatuses, "offline"]);
+                    } else {
+                      setSelectedStatuses(selectedStatuses.filter(s => s !== "offline"));
+                    }
+                  }}
                 />
-                <label htmlFor="status-offline" style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Offline</label>
+                <label htmlFor="status-offline">Offline</label>
               </div>
             </div>
-
-            {selectedTerminal && (
-              <div style={{ marginTop: "1rem" }}>
-                <h3 style={{ fontSize: "1.2rem", fontWeight: 600 }}>{selectedTerminal.merchant}</h3>
-                <p style={{ fontSize: "0.9rem", marginBottom: "0.25rem" }}><em>{selectedTerminal.bank} — Terminal #{selectedTerminal.id}</em></p>
-                <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
-                  Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <span style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      backgroundColor: selectedTerminal.status === 'active' ? 'green' : 'red',
-                      display: 'inline-block',
-                      marginRight: '6px'
-                    }}></span>
-                    <strong>{selectedTerminal.status === 'active' ? 'Online' : 'Offline'}</strong>
-                  </span>
-                </p>
-                <hr />
-                {selectedTerminal.services.map((s, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0.5rem 0" }}>
-                    <label style={{ fontSize: "0.875rem" }}>{s.name}</label>
-                    <input
-                      type="checkbox"
-                      checked={s.enabled}
-                      onChange={() => toggleVAS(selectedTerminal.id, s.name)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
         
         {/* MAP */}
-        <div style={{ flex: 1 }}>
-          <MapContainer center={[-25.2744, 133.7751]} zoom={4} style={{ height: "100%", width: "100%" }}>
+        <div className="map-container">
+          <MapContainer center={[-25.2744, 133.7751]} zoom={4} className="map">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="&copy; OpenStreetMap contributors"
             />
             {filteredData.map((t) => (
-              <Marker key={t.id} position={[t.lat, t.lng]} icon={getTerminalIcon(t.bank, t.status)} eventHandlers={{
-                click: () => setSelectedTerminal(t)
-              }}>
-                <Popup>
-                  <strong>{t.merchant}</strong><br /><em>{t.bank} – Terminal #{t.id}</em><br />
-                  Status: <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <span style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      backgroundColor: t.status === 'active' ? 'green' : 'red',
-                      display: 'inline-block',
-                      marginRight: '6px'
-                    }}></span>
+              <Marker 
+                key={t.id} 
+                position={[t.lat, t.lng]} 
+                icon={getTerminalIcon(t.bank, t.status)} 
+                eventHandlers={{
+                  click: () => handleTerminalSelect(t)
+                }}
+              >
+                <Popup className="map-popup">
+                  <strong>{t.merchant}</strong>
+                  <em>{t.bank} – Terminal #{t.id}</em>
+                  <div className="popup-status">
+                    <span className={`status-indicator ${t.status}`}></span>
                     <strong>{t.status === 'active' ? 'Online' : 'Offline'}</strong>
-                  </span>
+                  </div>
+                  <div className="popup-services">
+                    <h4>Value-Added Services</h4>
+                    {t.services.map((s, i) => (
+                      <div key={i} className="service-item">
+                        <label>{s.name}</label>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={s.enabled}
+                            onChange={() => toggleVAS(t.id, s.name)}
+                          />
+                          <span className="slider"></span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
         </div>
         
-        {/* INSIGHTS PANEL */}
-        <div style={{
-          width: "350px",
-          padding: "1.5rem",
-          backgroundColor: "#034043",
-          borderLeft: "1px solid rgba(255,255,255,0.1)",
-          color: "#fff",
-          overflowY: "auto"
-        }}>
+        {/* RIGHT PANEL - INSIGHTS */}
+        <div className="right-panel">
           {selectedTerminal ? (
             <div>
-              <h3 style={{ 
-                borderBottom: "1px solid rgba(255,255,255,0.3)", 
-                paddingBottom: "0.5rem",
-                marginBottom: "1.5rem"
-              }}>
+              <h3 className="insights-header">
                 TERMINAL #{selectedTerminal.id} INSIGHTS
               </h3>
               
               {/* Transaction Volume Chart */}
-              <div style={{ marginBottom: "2rem" }}>
-                <h4 style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center" }}>
-                  📊 Transaction Volume (30 days)
+              <div className="chart-container">
+                <h4>
+                  <span className="icon">📊</span> Transaction Volume (30 days)
                 </h4>
-                <div style={{ height: "250px" }}>
+                <div className="chart-wrapper">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={generateTerminalInsights(selectedTerminal.id).transactionData}
-                      margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
-                    >
+                    <LineChart data={terminalInsights[selectedTerminal.id]?.transactionData || []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#4a6b7b" />
                       <XAxis dataKey="date" tick={{ fill: '#fff' }} />
                       <YAxis tick={{ fill: '#fff' }} />
@@ -466,105 +417,67 @@ function App() {
               </div>
               
               {/* Uptime Status */}
-              <div style={{ marginBottom: "2rem" }}>
-                <h4 style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center" }}>
-                  📈 Uptime Status (7 days)
-                  <span style={{ 
-                    marginLeft: "auto", 
-                    backgroundColor: "#4a6b7b",
-                    padding: "0.25rem 0.5rem",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem"
-                  }}>
-                    {generateTerminalInsights(selectedTerminal.id).uptimePercent}% uptime
+              <div className="uptime-container">
+                <h4>
+                  <span className="icon">📈</span> Uptime Status (7 days)
+                  <span className="uptime-percentage">
+                    {terminalInsights[selectedTerminal.id]?.uptimePercent || 0}% uptime
                   </span>
                 </h4>
-                <div style={{ 
-                  display: "flex", 
-                  flexWrap: "wrap",
-                  gap: "2px",
-                  marginBottom: "0.5rem"
-                }}>
+                <div className="uptime-grid">
                   {Array.from({ length: 24 * 7 }).map((_, i) => {
-                    const status = generateTerminalInsights(selectedTerminal.id).uptimeData[i].status;
+                    const status = terminalInsights[selectedTerminal.id]?.uptimeData[i]?.status || 'online';
                     return (
                       <div 
                         key={i}
-                        style={{
-                          width: "10px",
-                          height: "10px",
-                          backgroundColor: status === 'online' ? '#4CAF50' : '#f44336',
-                          borderRadius: "2px"
-                        }}
+                        className={`uptime-cell ${status}`}
                         title={`Hour ${i % 24} on day ${Math.floor(i / 24)}`}
                       />
                     );
                   })}
                 </div>
-                <div style={{ 
-                  display: "flex", 
-                  justifyContent: "space-between",
-                  fontSize: "0.8rem",
-                  color: "#aaa"
-                }}>
+                <div className="uptime-timeline">
                   <span>7 days ago</span>
                   <span>Now</span>
                 </div>
               </div>
               
               {/* Key Metrics */}
-              <div>
-                <h4 style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center" }}>
-                  🔢 Key Metrics
+              <div className="metrics-container">
+                <h4>
+                  <span className="icon">🔢</span> Key Metrics
                 </h4>
-                <div style={{ 
-                  backgroundColor: "rgba(255,255,255,0.05)",
-                  borderRadius: "8px",
-                  padding: "1rem"
-                }}>
-                  <div style={{ 
-                    display: "grid", 
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "1rem"
-                  }}>
-                    <div>
-                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Total Volume</div>
-                      <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                        {generateTerminalInsights(selectedTerminal.id).totalVolume.toLocaleString()}
-                      </div>
+                <div className="metrics-grid">
+                  <div className="metric-item">
+                    <div className="metric-label">Total Volume</div>
+                    <div className="metric-value">
+                      {(terminalInsights[selectedTerminal.id]?.totalVolume || 0).toLocaleString()}
                     </div>
-                    <div>
-                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Approval %</div>
-                      <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                        {generateTerminalInsights(selectedTerminal.id).approvalRate}%
-                      </div>
+                  </div>
+                  <div className="metric-item">
+                    <div className="metric-label">Approval %</div>
+                    <div className="metric-value">
+                      {terminalInsights[selectedTerminal.id]?.approvalRate || 0}%
                     </div>
-                    <div>
-                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Last Seen</div>
-                      <div style={{ fontSize: "1rem", fontWeight: "bold" }}>
-                        {generateTerminalInsights(selectedTerminal.id).lastSeen}
-                      </div>
+                  </div>
+                  <div className="metric-item">
+                    <div className="metric-label">Last Seen</div>
+                    <div className="metric-value">
+                      {terminalInsights[selectedTerminal.id]?.lastSeen || 'N/A'}
                     </div>
-                    <div>
-                      <div style={{ fontSize: "0.8rem", color: "#aaa" }}>Top VAS</div>
-                      <div style={{ fontSize: "1rem", fontWeight: "bold" }}>
-                        {generateTerminalInsights(selectedTerminal.id).topVAS}
-                      </div>
+                  </div>
+                  <div className="metric-item">
+                    <div className="metric-label">Top VAS</div>
+                    <div className="metric-value">
+                      {terminalInsights[selectedTerminal.id]?.topVAS || 'N/A'}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div style={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center",
-              height: "100%",
-              textAlign: "center"
-            }}>
-              <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>📊</div>
+            <div className="empty-state">
+              <div className="empty-icon">📊</div>
               <p>Select a terminal from the map or filter panel to view detailed analytics and metrics.</p>
             </div>
           )}
