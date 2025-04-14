@@ -8,8 +8,6 @@ import LinklyLogo from "./assets/linkly-logo.png";
 import { 
   LineChart, 
   Line, 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
