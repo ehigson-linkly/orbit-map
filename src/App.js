@@ -15,7 +15,7 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
+import { format, subDays, subMonths } from 'date-fns';
 
 const PASSWORD = "i00t#GG3Fzfe";
 
