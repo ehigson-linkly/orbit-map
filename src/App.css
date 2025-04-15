@@ -46,6 +46,16 @@ body {
   color: #333;
 }
 
+.login-logo {
+  width: 140px;
+  margin-bottom: 1rem;
+}
+
+.login-orbit-logo {
+  width: 100px;
+  margin-bottom: 1.5rem;
+}
+
 .login-input {
   width: 100%;
   padding: 0.75rem;
@@ -96,6 +106,10 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
+.header-logo {
+  height: 80px;
+}
+
 .main-content {
   display: flex;
   flex: 1;
@@ -116,6 +130,11 @@ body {
 .panel-header {
   margin-bottom: 2rem;
   text-align: center;
+}
+
+.orbit-logo {
+  height: 80px;
+  margin-bottom: 1rem;
 }
 
 .filter-section {
@@ -219,7 +238,6 @@ body {
 .map-container {
   flex: 1;
   position: relative;
-  border: 2px solid #FFFFE7;
 }
 
 .map {
