@@ -263,8 +263,6 @@ function App() {
     return (
       <div className="login-container">
         <div className="login-box">
-          <img src={LinklyLogo} alt="Linkly Logo" className="login-logo" />
-          <img src={OrbitLogo} alt="Orbit Logo" className="login-orbit-logo" />
           <h2>Terminal Management System</h2>
           <p>Please enter the password to access the system</p>
           <form onSubmit={handleLogin}>
@@ -390,7 +388,7 @@ function App() {
         </div>
         
         {/* MAP */}
-        <div className="map-container">
+        <div className="map-container" style={{ border: '8px solid #FFFFE7' }}>
           <MapContainer center={[-25.2744, 133.7751]} zoom={4} className="map">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
