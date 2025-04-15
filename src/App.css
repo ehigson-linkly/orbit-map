@@ -494,3 +494,36 @@ input:checked + .slider:before {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.3);
 }
+
+.time-period-selector {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background-color: rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+.period-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.period-button {
+  flex: 1;
+  padding: 0.5rem;
+  background-color: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.period-button:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+.period-button.active {
+  background-color: #4CAF50;
+  font-weight: 500;
+}

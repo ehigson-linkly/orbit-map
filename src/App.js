@@ -15,7 +15,7 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { format, subDays } from 'date-fns';
+import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
 
 const PASSWORD = "i00t#GG3Fzfe";
 
@@ -23,6 +23,13 @@ const VAS_OPTIONS = [
   "Tap2Phone", "Smart Routing", "eCommerce", "POS Support",
   "AI Fraud Detection", "QR Payments", "Digital Receipts",
   "Cashback Offers", "Buy Now Pay Later", "Currency Conversion"
+];
+
+const TIME_PERIODS = [
+  { id: 'day', label: 'Daily', days: 1 },
+  { id: 'week', label: 'Weekly', days: 7 },
+  { id: 'month', label: 'Monthly', days: 30 },
+  { id: 'year', label: 'Yearly', days: 365 }
 ];
 
 const generateMockTerminals = (count) => {
@@ -93,22 +100,61 @@ const getTerminalIcon = (bank, status) => {
   });
 };
 
-const generateTerminalInsights = (terminalId) => {
-  const transactionData = Array.from({ length: 30 }, (_, i) => {
-    const date = subDays(new Date(), 30 - i);
+const generateTerminalInsights = (terminalId, timePeriod = 'month') => {
+  let days, dataPoints, dateFormat;
+  
+  switch (timePeriod) {
+    case 'day':
+      days = 1;
+      dataPoints = 24;
+      dateFormat = 'h:mm a';
+      break;
+    case 'week':
+      days = 7;
+      dataPoints = 7;
+      dateFormat = 'EEE';
+      break;
+    case 'month':
+      days = 30;
+      dataPoints = 30;
+      dateFormat = 'MMM dd';
+      break;
+    case 'year':
+      days = 365;
+      dataPoints = 12;
+      dateFormat = 'MMM yyyy';
+      break;
+    default:
+      days = 30;
+      dataPoints = 30;
+      dateFormat = 'MMM dd';
+  }
+
+  const transactionData = Array.from({ length: dataPoints }, (_, i) => {
+    const date = timePeriod === 'day' 
+      ? subDays(new Date(), (dataPoints - i - 1) / 24)
+      : subDays(new Date(), days - Math.floor((i * days) / dataPoints));
+    
     return {
-      date: format(date, 'MMM dd'),
+      date: format(date, dateFormat),
       volume: Math.floor(Math.random() * 10000) + 1000,
       value: Math.floor(Math.random() * 50000) + 5000,
     };
   });
 
-  const uptimeData = Array.from({ length: 24 * 7 }, (_, i) => {
-    const date = subDays(new Date(), 7 - Math.floor(i / 24));
-    const hour = i % 24;
+  const uptimeDataPoints = timePeriod === 'day' ? 24 : timePeriod === 'week' ? 24 * 7 : timePeriod === 'month' ? 30 : 12;
+  const uptimeData = Array.from({ length: uptimeDataPoints }, (_, i) => {
+    const date = timePeriod === 'day'
+      ? subDays(new Date(), (uptimeDataPoints - i - 1) / 24)
+      : timePeriod === 'week'
+      ? subDays(new Date(), 7 - Math.floor(i / 24))
+      : timePeriod === 'month'
+      ? subDays(new Date(), 30 - i)
+      : subMonths(new Date(), 12 - i);
+    
     return {
-      date: format(date, 'MMM dd'),
-      hour,
+      date: format(date, timePeriod === 'year' ? 'MMM yyyy' : 'MMM dd'),
+      hour: timePeriod === 'day' ? i : timePeriod === 'week' ? i % 24 : 0,
       status: Math.random() > 0.05 ? 'online' : 'offline'
     };
   });
@@ -136,7 +182,8 @@ const generateTerminalInsights = (terminalId) => {
     totalValue,
     approvalRate,
     lastSeen,
-    topVAS
+    topVAS,
+    timePeriod
   };
 };
 
@@ -150,6 +197,7 @@ function App() {
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedTerminal, setSelectedTerminal] = useState(null);
   const [terminalInsights, setTerminalInsights] = useState({});
+  const [timePeriod, setTimePeriod] = useState('month');
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -187,11 +235,26 @@ function App() {
 
   const handleTerminalSelect = (terminal) => {
     setSelectedTerminal(terminal);
-    // Cache the insights data for this terminal
-    if (!terminalInsights[terminal.id]) {
+    if (!terminalInsights[terminal.id]?.[timePeriod]) {
       setTerminalInsights(prev => ({
         ...prev,
-        [terminal.id]: generateTerminalInsights(terminal.id)
+        [terminal.id]: {
+          ...prev[terminal.id],
+          [timePeriod]: generateTerminalInsights(terminal.id, timePeriod)
+        }
+      }));
+    }
+  };
+
+  const handleTimePeriodChange = (period) => {
+    setTimePeriod(period);
+    if (selectedTerminal && (!terminalInsights[selectedTerminal.id] || !terminalInsights[selectedTerminal.id][period])) {
+      setTerminalInsights(prev => ({
+        ...prev,
+        [selectedTerminal.id]: {
+          ...prev[selectedTerminal.id],
+          [period]: generateTerminalInsights(selectedTerminal.id, period)
+        }
       }));
     }
   };
@@ -379,16 +442,38 @@ function App() {
                 TERMINAL #{selectedTerminal.id} INSIGHTS
               </h3>
               
+              {/* Time Period Selector */}
+              <div className="time-period-selector">
+                <div className="period-buttons">
+                  {TIME_PERIODS.map((period) => (
+                    <button
+                      key={period.id}
+                      className={`period-button ${timePeriod === period.id ? 'active' : ''}`}
+                      onClick={() => handleTimePeriodChange(period.id)}
+                    >
+                      {period.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
               {/* Transaction Volume Chart */}
               <div className="chart-container">
                 <h4>
-                  <span className="icon">📊</span> Transaction Volume (30 days)
+                  <span className="icon">📊</span> Transaction Volume ({TIME_PERIODS.find(p => p.id === timePeriod)?.label})
                 </h4>
                 <div className="chart-wrapper">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={terminalInsights[selectedTerminal.id]?.transactionData || []}>
+                    <LineChart 
+                      data={terminalInsights[selectedTerminal.id]?.[timePeriod]?.transactionData || []}
+                      margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+                    >
                       <CartesianGrid strokeDasharray="3 3" stroke="#4a6b7b" />
-                      <XAxis dataKey="date" tick={{ fill: '#fff' }} />
+                      <XAxis 
+                        dataKey="date" 
+                        tick={{ fill: '#fff' }} 
+                        minTickGap={timePeriod === 'day' ? 4 : timePeriod === 'year' ? 1 : 2}
+                      />
                       <YAxis tick={{ fill: '#fff' }} />
                       <Tooltip 
                         contentStyle={{ 
@@ -419,25 +504,33 @@ function App() {
               {/* Uptime Status */}
               <div className="uptime-container">
                 <h4>
-                  <span className="icon">📈</span> Uptime Status (7 days)
+                  <span className="icon">📈</span> Uptime Status ({TIME_PERIODS.find(p => p.id === timePeriod)?.label})
                   <span className="uptime-percentage">
-                    {terminalInsights[selectedTerminal.id]?.uptimePercent || 0}% uptime
+                    {terminalInsights[selectedTerminal.id]?.[timePeriod]?.uptimePercent || 0}% uptime
                   </span>
                 </h4>
                 <div className="uptime-grid">
-                  {Array.from({ length: 24 * 7 }).map((_, i) => {
-                    const status = terminalInsights[selectedTerminal.id]?.uptimeData[i]?.status || 'online';
+                  {Array.from({ 
+                    length: timePeriod === 'day' ? 24 : 
+                           timePeriod === 'week' ? 24 * 7 : 
+                           timePeriod === 'month' ? 30 : 12 
+                  }).map((_, i) => {
+                    const status = terminalInsights[selectedTerminal.id]?.[timePeriod]?.uptimeData[i]?.status || 'online';
                     return (
                       <div 
                         key={i}
                         className={`uptime-cell ${status}`}
-                        title={`Hour ${i % 24} on day ${Math.floor(i / 24)}`}
+                        title={`${timePeriod === 'day' ? 'Hour' : timePeriod === 'week' ? 'Hour' : 'Day'} ${i}`}
                       />
                     );
                   })}
                 </div>
                 <div className="uptime-timeline">
-                  <span>7 days ago</span>
+                  <span>
+                    {timePeriod === 'day' ? '24h ago' : 
+                     timePeriod === 'week' ? '7 days ago' : 
+                     timePeriod === 'month' ? '30 days ago' : '1 year ago'}
+                  </span>
                   <span>Now</span>
                 </div>
               </div>
@@ -451,25 +544,25 @@ function App() {
                   <div className="metric-item">
                     <div className="metric-label">Total Volume</div>
                     <div className="metric-value">
-                      {(terminalInsights[selectedTerminal.id]?.totalVolume || 0).toLocaleString()}
+                      {(terminalInsights[selectedTerminal.id]?.[timePeriod]?.totalVolume || 0).toLocaleString()}
                     </div>
                   </div>
                   <div className="metric-item">
                     <div className="metric-label">Approval %</div>
                     <div className="metric-value">
-                      {terminalInsights[selectedTerminal.id]?.approvalRate || 0}%
+                      {terminalInsights[selectedTerminal.id]?.[timePeriod]?.approvalRate || 0}%
                     </div>
                   </div>
                   <div className="metric-item">
                     <div className="metric-label">Last Seen</div>
                     <div className="metric-value">
-                      {terminalInsights[selectedTerminal.id]?.lastSeen || 'N/A'}
+                      {terminalInsights[selectedTerminal.id]?.[timePeriod]?.lastSeen || 'N/A'}
                     </div>
                   </div>
                   <div className="metric-item">
                     <div className="metric-label">Top VAS</div>
                     <div className="metric-value">
-                      {terminalInsights[selectedTerminal.id]?.topVAS || 'N/A'}
+                      {terminalInsights[selectedTerminal.id]?.[timePeriod]?.topVAS || 'N/A'}
                     </div>
                   </div>
                 </div>
