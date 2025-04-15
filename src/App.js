@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./App.css";
+import OrbitLogo from "./assets/orbit-logo.png";
+import LinklyLogo from "./assets/linkly-logo.png";
 import { 
   LineChart, 
   Line, 
@@ -261,6 +263,8 @@ function App() {
     return (
       <div className="login-container">
         <div className="login-box">
+          <img src={LinklyLogo} alt="Linkly Logo" className="login-logo" />
+          <img src={OrbitLogo} alt="Orbit Logo" className="login-orbit-logo" />
           <h2>Terminal Management System</h2>
           <p>Please enter the password to access the system</p>
           <form onSubmit={handleLogin}>
@@ -286,7 +290,7 @@ function App() {
     <div className="app-container">
       {/* HEADER */}
       <header className="app-header">
-        <h1>Terminal Management System</h1>
+        <img src={LinklyLogo} alt="Linkly Logo" className="header-logo" />
       </header>
 
       {/* MAIN LAYOUT */}
@@ -294,6 +298,7 @@ function App() {
         {/* LEFT PANEL - FILTERS */}
         <div className="left-panel">
           <div className="panel-header">
+            <img src={OrbitLogo} alt="Orbit Logo" className="orbit-logo" />
             <h2>Terminal Filters</h2>
           </div>
           
@@ -385,7 +390,7 @@ function App() {
         </div>
         
         {/* MAP */}
-        <div className="map-container" style={{ border: '2px solid #FFFFE7' }}>
+        <div className="map-container">
           <MapContainer center={[-25.2744, 133.7751]} zoom={4} className="map">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
