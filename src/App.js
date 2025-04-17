@@ -1,11 +1,10 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/sidebar';
-import Header from './components/header';
-import Dashboard from './pages/dashboard';
-import TerminalMap from './pages/terminalmap';
-import { TerminalProvider } from './context/terminalcontext';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import Dashboard from './pages/Dashboard';
+import TerminalMap from './pages/TerminalMap';
+import { TerminalProvider } from './context/TerminalContext';
 
 export default function App() {
   return (

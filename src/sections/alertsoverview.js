@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { TerminalContext } from '../context/terminalcontext';
+import { TerminalContext } from '../context/TerminalContext';
 import { FiAlertTriangle, FiArrowRight } from 'react-icons/fi';
 
 const alertTypes = {

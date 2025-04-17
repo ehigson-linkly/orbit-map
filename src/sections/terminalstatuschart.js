@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { TerminalContext } from '../context/terminalcontext';
+import { TerminalContext } from '../context/TerminalContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FiActivity } from 'react-icons/fi';
 

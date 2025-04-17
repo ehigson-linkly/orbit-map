@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { TerminalContext } from '../context/terminalcontext';
+import { TerminalContext } from '../context/TerminalContext';
 import { FiActivity, FiDollarSign, FiAlertTriangle, FiClock } from 'react-icons/fi';
 
 export default function OverviewCards() {

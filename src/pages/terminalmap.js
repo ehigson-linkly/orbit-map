@@ -1,73 +1,77 @@
-// src/pages/terminalmap.js
-import React, { useContext, useState } from 'react';
-import { TerminalContext } from '../context/terminalcontext';
-import Map from 'react-map-gl';
-import { FaTerminal } from 'react-icons/fa';
-import { FiFilter, FiX } from 'react-icons/fi';
+import React, { useContext, useEffect, useState } from 'react';
+import { TerminalContext } from '../context/TerminalContext';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
-const AUS_BOUNDS = {
-  minLongitude: 112.5,
-  minLatitude: -44,
-  maxLongitude: 154,
-  maxLatitude: -10
-};
-
-const ACQUIRERS = [
-  { id: 'tyro', name: 'Tyro Payments', color: '#4f46e5' },
-  { id: 'square', name: 'Square', color: '#3a86ff' },
-  { id: 'zeller', name: 'Zeller', color: '#8338ec' },
-  { id: 'stripe', name: 'Stripe', color: '#635bff' },
-  { id: 'commonwealth', name: 'CommBank', color: '#009688' },
-  { id: 'westpac', name: 'Westpac', color: '#e53935' },
-];
+// Fix for default marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 export default function TerminalMap() {
-  const { terminals } = useContext(TerminalContext);
-  const [selectedTerminal, setSelectedTerminal] = useState(null);
-  const [filters, setFilters] = useState({
-    status: 'all',
-    acquirers: ACQUIRERS.map(a => a.id)
-  });
-  const [showFilters, setShowFilters] = useState(false);
+  const { terminals, isLoading } = useContext(TerminalContext);
+  const [mapReady, setMapReady] = useState(false);
 
-  const [viewport, setViewport] = useState({
-    width: '100%',
-    height: '100%',
-    latitude: -25.2744,
-    longitude: 133.7751,
-    zoom: 4
-  });
+  useEffect(() => {
+    setMapReady(true);
+  }, []);
 
-  const filteredTerminals = terminals.filter(terminal => {
-    const statusMatch = filters.status === 'all' || terminal.status === filters.status;
-    const acquirerMatch = filters.acquirers.includes(terminal.acquirer || 'tyro');
-    return statusMatch && acquirerMatch;
-  });
-
-  const toggleAcquirerFilter = (acquirerId) => {
-    setFilters(prev => ({
-      ...prev,
-      acquirers: prev.acquirers.includes(acquirerId)
-        ? prev.acquirers.filter(id => id !== acquirerId)
-        : [...prev.acquirers, acquirerId]
-    }));
-  };
+  if (isLoading || !mapReady) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-pulse text-gray-500">Loading terminals...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
-      {/* Header and Filters remain the same as your previous version */}
-      {/* Map Container */}
-      <Map
-        {...viewport}
-        mapStyle="mapbox://styles/mapbox/light-v10"
-        mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-        onMove={evt => setViewport(evt.viewState)}
-        minZoom={3}
-        maxBounds={AUS_BOUNDS}
+    <div className="h-full">
+      <MapContainer
+        center={[-25.2744, 133.7751]} // Center of Australia
+        zoom={4}
+        style={{ height: '100%', width: '100%' }}
       >
-        {/* Include all your Marker and Popup components */}
-      </Map>
-      {/* Rest of your component remains the same */}
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        
+        {terminals.map((terminal) => (
+          <Marker
+            key={terminal.id}
+            position={[terminal.lat, terminal.lng]}
+          >
+            <Popup>
+              <div className="w-48">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-medium">{terminal.id}</h3>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    terminal.status === 'online' 
+                      ? 'bg-green-100 text-green-800' 
+                      : terminal.status === 'maintenance'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : terminal.status === 'low_battery'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-red-100 text-red-800'
+                  }`}>
+                    {terminal.status}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p>{terminal.location}</p>
+                  <p>{terminal.merchantType}</p>
+                  <p className="mt-1">Volume: ${terminal.volume.toLocaleString()}</p>
+                  <p>Uptime: {terminal.uptime.toFixed(1)}%</p>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
     </div>
   );
 }
