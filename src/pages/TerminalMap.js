@@ -19,10 +19,19 @@ import {
   FiShoppingBag,
   FiDroplet,
   FiTruck,
-  FiHeart
+  FiHeart,
+  FiActivity,
+  FiWifi,
+  FiShield,
+  FiBarChart2,
+  FiDollarSign,
+  FiAward,
+  FiGift,
+  FiShoppingCart,
+  FiCheck,
+  FiCircle
 } from 'react-icons/fi';
 
-// Fix for default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -126,54 +135,73 @@ const vasCompatibility = [
   {
     id: 'alt_payments',
     label: 'Alternative Payment Methods',
-    icon: <FiCreditCard className="mr-2 text-indigo-500" />,
+    icon: <FiShoppingCart className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
       { id: 'epay', label: 'EPAY' },
       { id: 'afterpay', label: 'AfterPay' },
       { id: 'alipay', label: 'AliPay' },
-      { id: 'wechat', label: 'WeChat' }
+      { id: 'wechat', label: 'WeChat' },
+      { id: 'unionpay', label: 'UnionPay' }
     ]
   },
   {
     id: 'loyalty',
     label: 'Loyalty Programmes',
-    icon: <FiCreditCard className="mr-2 text-indigo-500" />,
+    icon: <FiAward className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
       { id: 'qantas', label: 'Qantas Loyalty' },
       { id: 'velocity', label: 'Velocity Frequent Flyer' },
       { id: 'flybuys', label: 'Coles Flybuys' },
-      { id: 'everyday', label: 'Woolworths Everyday Rewards' }
+      { id: 'everyday', label: 'Woolworths Everyday Rewards' },
+      { id: 'rewards', label: 'American Express Rewards' }
     ]
   },
   {
     id: 'gift_cards',
     label: 'Gift Card Support',
-    icon: <FiCreditCard className="mr-2 text-indigo-500" />,
+    icon: <FiGift className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
       { id: 'blackhawk', label: 'Blackhawk' },
       { id: 'incomm', label: 'Incomm' },
-      { id: 'givex', label: 'GIVEX' }
+      { id: 'givex', label: 'GIVEX' },
+      { id: 'prezzee', label: 'Prezzee' },
+      { id: 'flexigroup', label: 'FlexiGroup' }
     ]
   },
   {
     id: 'marketing',
     label: 'Marketing & Customer Insights',
-    icon: <FiCreditCard className="mr-2 text-indigo-500" />,
+    icon: <FiBarChart2 className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
       { id: 'trurating', label: 'TruRating' },
-      { id: 'yumpingo', label: 'YumPingo' }
+      { id: 'yumpingo', label: 'YumPingo' },
+      { id: 'powerrewards', label: 'Power Rewards' }
+    ]
+  },
+  {
+    id: 'card_offers',
+    label: 'Cardholder Offers',
+    icon: <FiDollarSign className="mr-2 text-indigo-500" />,
+    expanded: false,
+    children: [
+      { id: 'visa_discounts', label: 'Visa Discounts' },
+      { id: 'mastercard_priceless', label: 'Mastercard Priceless' },
+      { id: 'amex_offers', label: 'Amex Offers' },
+      { id: 'diners_club', label: 'Diners Club Privileges' }
     ]
   }
 ];
 
 const terminalFeatures = [
   { id: 'acquirer_redundancy', label: 'Acquirer Redundancy', icon: <FiServer className="mr-2 text-pink-500" /> },
-  { id: 'ai_fraud', label: 'AI Fraud Detection', icon: <FiCpu className="mr-2 text-pink-500" /> },
-  { id: 'ai_routing', label: 'AI SmartRouting (LCR)', icon: <FiMove className="mr-2 text-pink-500" /> }
+  { id: 'ai_fraud', label: 'AI Fraud Detection', icon: <FiShield className="mr-2 text-pink-500" /> },
+  { id: 'ai_routing', label: 'AI SmartRouting (LCR)', icon: <FiMove className="mr-2 text-pink-500" /> },
+  { id: 'wifi', label: 'WiFi Connectivity', icon: <FiWifi className="mr-2 text-pink-500" /> },
+  { id: 'analytics', label: 'Advanced Analytics', icon: <FiActivity className="mr-2 text-pink-500" /> }
 ];
 
 const merchantIcons = {
@@ -205,7 +233,7 @@ const getTerminalImage = (terminal) => {
 };
 
 export default function TerminalMap() {
-  const { terminals, isLoading } = useContext(TerminalContext);
+  const { terminals, isLoading, updateTerminal } = useContext(TerminalContext);
   const [mapReady, setMapReady] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
   const [selectedOrbitTypes, setSelectedOrbitTypes] = useState([]);
@@ -223,6 +251,7 @@ export default function TerminalMap() {
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const filterPanelRef = useRef(null);
+  const [expandedVasGroups, setExpandedVasGroups] = useState({});
 
   const createCustomIcon = (terminal) => {
     const statusColor = terminal.status === 'online' ? 'border-green-500' : 'border-red-500';
@@ -297,7 +326,7 @@ export default function TerminalMap() {
     
     if (selectedFeatures.length > 0) {
       filtered = filtered.filter(terminal => {
-        const feature = terminalFeatures[terminal.id.charCodeAt(8) % 3].id;
+        const feature = terminalFeatures[terminal.id.charCodeAt(8) % 5].id;
         return selectedFeatures.includes(feature);
       });
     }
@@ -438,6 +467,24 @@ export default function TerminalMap() {
     );
   };
 
+  const toggleVasGroupInPopup = (groupId) => {
+    setExpandedVasGroups(prev => ({
+      ...prev,
+      [groupId]: !prev[groupId]
+    }));
+  };
+
+  const toggleVasFeature = async (terminalId, vasId) => {
+    const terminal = terminals.find(t => t.id === terminalId);
+    if (!terminal) return;
+
+    const updatedFeatures = terminal.vasFeatures.map(feature => 
+      feature.id === vasId ? { ...feature, enabled: !feature.enabled } : feature
+    );
+
+    await updateTerminal(terminalId, { vasFeatures: updatedFeatures });
+  };
+
   const isPosConnectionSelected = (connectionId) => {
     return selectedPosConnections.includes(connectionId);
   };
@@ -469,23 +516,6 @@ export default function TerminalMap() {
     setActiveFilterSection(activeFilterSection === section ? null : section);
   };
 
-  const toggleVasFeature = (terminalId, vasId) => {
-    setFilteredTerminals(prev => 
-      prev.map(terminal => 
-        terminal.id === terminalId
-          ? {
-              ...terminal,
-              vasFeatures: terminal.vasFeatures.map(feature => 
-                feature.id === vasId
-                  ? { ...feature, enabled: !feature.enabled }
-                  : feature
-              )
-            }
-          : terminal
-      )
-    );
-  };
-
   if (isLoading || !mapReady) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -503,6 +533,17 @@ export default function TerminalMap() {
         }
         .custom-marker img {
           border-radius: 50%;
+        }
+        .leaflet-popup-content-wrapper {
+          border-radius: 12px !important;
+          padding: 0 !important;
+        }
+        .leaflet-popup-content {
+          margin: 0 !important;
+          width: auto !important;
+        }
+        .leaflet-popup-tip-container {
+          pointer-events: none;
         }
       `}</style>
       
@@ -868,8 +909,8 @@ export default function TerminalMap() {
                           type="checkbox"
                           id={`feature-${feature.id}`}
                           checked={selectedFeatures.includes(feature.id)}
-                          onChange={() => toggleFeature(feature.id)}
-                          className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+			onChange={() => toggleFeature(feature.id)}
+			className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                         />
                         <label htmlFor={`feature-${feature.id}`} className="ml-2 text-sm text-gray-700">
                           {feature.label}
@@ -922,85 +963,86 @@ export default function TerminalMap() {
               position={[terminal.lat, terminal.lng]}
               icon={createCustomIcon(terminal)}
             >
-              <Popup>
-                <div className="w-72">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center">
-                      {merchantIcons[terminal.merchantType]}
-                      <h3 className="font-medium ml-2">{terminal.merchantType}</h3>
+              <Popup closeButton={false}>
+                <div className="w-80 p-4">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-800">{terminal.merchantName}</h3>
+                    <div className="flex justify-center items-center mt-1 space-x-2">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                        {terminal.merchantType}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        terminal.status === 'online' 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {terminal.status.toUpperCase()}
+                      </span>
                     </div>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      terminal.status === 'online' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {terminal.status}
-                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between text-xs text-gray-500 mb-4">
+                    <div>
+                      <span className="block font-medium">Terminal ID</span>
+                      <span>{terminal.id}</span>
+                    </div>
+                    <div>
+                      <span className="block font-medium">Hardware</span>
+                      <span>{hardwareLabel}</span>
+                    </div>
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <p className="text-xs text-gray-500">Terminal ID</p>
-                        <p className="text-sm font-medium">{terminal.id}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Hardware</p>
-                        <p className="text-sm font-medium">{hardwareLabel}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="border-t border-gray-100 pt-3">
-                      <div className="space-y-3">
-                        {vasState.map(vasGroup => (
-                          <div key={vasGroup.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleVasGroup(vasGroup.id);
-                              }}
-                              className="w-full flex justify-between items-center p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                            >
-                              <div className="flex items-center">
-                                {vasGroup.icon}
-                                <span>{vasGroup.label}</span>
-                              </div>
-                              {vasGroup.expanded ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
-                            </button>
-                            
-                            {vasGroup.expanded && (
-                              <div className="p-2 pt-0 space-y-2">
-                                {vasGroup.children?.map(vasItem => {
-                                  const terminalVas = terminal.vasFeatures.find(f => f.id === vasItem.id);
-                                  if (!terminalVas) return null;
-                                  
-                                  return (
-                                    <div key={vasItem.id} className="flex items-center justify-between pl-6">
-                                      <span className="text-sm">{vasItem.label}</span>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          toggleVasFeature(terminal.id, vasItem.id);
-                                        }}
-                                        className={`relative inline-flex items-center h-5 rounded-full w-10 transition-colors focus:outline-none ${
-                                          terminalVas.enabled ? 'bg-green-500' : 'bg-gray-300'
-                                        }`}
-                                      >
-                                        <span
-                                          className={`inline-block w-4 h-4 transform transition-transform rounded-full bg-white ${
-                                            terminalVas.enabled ? 'translate-x-5' : 'translate-x-1'
-                                          }`}
-                                        />
-                                      </button>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
+                    {vasCompatibility.map(group => (
+                      <div key={group.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleVasGroupInPopup(group.id);
+                          }}
+                          className="w-full flex justify-between items-center p-2 bg-gray-50 hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center">
+                            {group.icon}
+                            <span className="text-sm font-medium">{group.label}</span>
                           </div>
-                        ))}
+                          {expandedVasGroups[group.id] ? (
+                            <FiChevronUp className="text-gray-500" />
+                          ) : (
+                            <FiChevronDown className="text-gray-500" />
+                          )}
+                        </button>
+                        
+                        {expandedVasGroups[group.id] && (
+                          <div className="p-2 grid grid-cols-2 gap-2">
+                            {group.children.map(child => {
+                              const feature = terminal.vasFeatures.find(f => f.id === child.id);
+                              return (
+                                <button
+                                  key={child.id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleVasFeature(terminal.id, child.id);
+                                  }}
+                                  className={`flex items-center text-xs p-1 rounded ${
+                                    feature?.enabled 
+                                      ? 'bg-indigo-50 text-indigo-700' 
+                                      : 'hover:bg-gray-50'
+                                  }`}
+                                >
+                                  {feature?.enabled ? (
+                                    <FiCheck className="mr-1 text-indigo-500" size={12} />
+                                  ) : (
+                                    <FiCircle className="mr-1 text-gray-300" size={12} />
+                                  )}
+                                  {child.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </Popup>

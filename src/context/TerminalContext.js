@@ -44,6 +44,15 @@ export function TerminalProvider({ children }) {
 
 function generateMockTerminals() {
   const merchants = ['Retail', 'Hospitality', 'Fuel', 'Transport', 'Healthcare'];
+  const merchantNames = {
+    Retail: ['Best Buy', 'Target', 'Walmart', 'Kmart', 'Big W', 'Myer', 'David Jones'],
+    Hospitality: ['Marriott', 'Hilton', 'Hyatt', 'Accor', 'Meriton', 'Quest'],
+    Fuel: ['BP', 'Shell', 'Caltex', 'Ampol', '7-Eleven', 'United'],
+    Transport: ['Uber', 'Lyft', 'Didi', 'Ola', 'Taxi Combined', '13CABS'],
+    Healthcare: ['Priceline', 'Chemist Warehouse', 'Terry White', 'Amcal', 'Guardian']
+  };
+  const businessSuffixes = ['PTY LTD', 'LTD', 'Inc', 'Group', 'Holdings', 'Corp'];
+  
   const hardwareModels = {
     ingenico: ['move5000', 'dx8000', 'axium'],
     verifone: ['t650m', 't650p', 'victa'],
@@ -53,10 +62,11 @@ function generateMockTerminals() {
   const orbitTypes = ['standalone', 'standalone_plus', 'integrated', 'integrated_plus'];
   const acquirers = ['cba', 'anz', 'westpac', 'nab', 'fiserv', 'first_data'];
   const vasOptions = [
-    'epay', 'afterpay', 'alipay', 'wechat',
-    'qantas', 'velocity', 'flybuys', 'everyday',
-    'blackhawk', 'incomm', 'givex',
-    'trurating', 'yumpingo'
+    'epay', 'afterpay', 'alipay', 'wechat', 'unionpay',
+    'qantas', 'velocity', 'flybuys', 'everyday', 'rewards',
+    'blackhawk', 'incomm', 'givex', 'prezzee', 'flexigroup',
+    'trurating', 'yumpingo', 'powerrewards', 'visa_discounts',
+    'mastercard_priceless', 'amex_offers', 'diners_club'
   ];
 
   const weightedLocations = [
@@ -125,12 +135,14 @@ function generateMockTerminals() {
     const volume = Math.floor(Math.random() * 10000) + 1000;
     const uptime = status === 'online' ? 95 + Math.random() * 5 : 50 + Math.random() * 30;
     const merchantType = merchants[Math.floor(Math.random() * merchants.length)];
+    const merchantName = merchantNames[merchantType][Math.floor(Math.random() * merchantNames[merchantType].length)];
+    const businessName = `${merchantName} ${businessSuffixes[Math.floor(Math.random() * businessSuffixes.length)]}`;
     const orbitType = orbitTypes[Math.floor(Math.random() * orbitTypes.length)];
     const acquirer = acquirers[Math.floor(Math.random() * acquirers.length)];
     const hardwareBrand = Object.keys(hardwareModels)[Math.floor(Math.random() * Object.keys(hardwareModels).length)];
     const hardwareModel = hardwareModels[hardwareBrand][Math.floor(Math.random() * hardwareModels[hardwareBrand].length)];
 
-    const vasCount = Math.floor(Math.random() * 4) + 3;
+    const vasCount = Math.floor(Math.random() * 6) + 3;
     const vasFeatures = [];
     const shuffledVas = [...vasOptions].sort(() => 0.5 - Math.random());
     for (let j = 0; j < vasCount; j++) {
@@ -145,6 +157,7 @@ function generateMockTerminals() {
       id: `T-${10000 + i}`,
       status,
       merchantType,
+      merchantName: businessName,
       location: city,
       lat: coords.lat + (Math.random() * 0.05 - 0.01),
       lng: coords.lng + (Math.random() * 0.05 - 0.01),
