@@ -8,7 +8,6 @@ import {
   FiX, 
   FiChevronDown, 
   FiChevronUp,
-  FiCpu,
   FiDatabase,
   FiCreditCard,
   FiLink,
@@ -203,14 +202,6 @@ const terminalFeatures = [
   { id: 'wifi', label: 'WiFi Connectivity', icon: <FiWifi className="mr-2 text-pink-500" /> },
   { id: 'analytics', label: 'Advanced Analytics', icon: <FiActivity className="mr-2 text-pink-500" /> }
 ];
-
-const merchantIcons = {
-  Retail: <FiShoppingBag className="text-blue-500" />,
-  Hospitality: <FiHome className="text-green-500" />,
-  Fuel: <FiDroplet className="text-yellow-500" />,
-  Transport: <FiTruck className="text-purple-500" />,
-  Healthcare: <FiHeart className="text-red-500" />
-};
 
 const getTerminalImage = (terminal) => {
   const { acquirer, hardwareBrand, hardwareModel } = terminal;

@@ -3,8 +3,6 @@ import OverviewCards from '../sections/overviewcards';
 import TerminalStatusChart from '../sections/terminalstatuschart';
 import TopMerchantsTable from '../sections/topmerchantstable';
 import RevenueByCategory from '../sections/revenuebycategory';
-import UptimePerformance from '../sections/uptimeperformance';
-import AlertsOverview from '../sections/alertsoverview';
 
 export default function Dashboard() {
   return (
@@ -19,8 +17,6 @@ export default function Dashboard() {
         
         <div className="space-y-6">
           <RevenueByCategory />
-          <UptimePerformance />
-          <AlertsOverview />
         </div>
       </div>
     </div>
