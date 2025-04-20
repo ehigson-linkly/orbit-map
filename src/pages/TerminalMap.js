@@ -184,20 +184,14 @@ const merchantIcons = {
   Healthcare: <FiHeart className="text-red-500" />
 };
 
-// Function to get terminal image path based on acquirer and hardware
 const getTerminalImage = (terminal) => {
   const { acquirer, hardwareBrand, hardwareModel } = terminal;
-  
-  // List of banks we have specific images for
   const supportedBanks = ['cba', 'nab', 'westpac'];
-  
-  // Only these hardware models have specific images
   const supportedModels = {
     ingenico: ['move5000'],
     verifone: ['t650m', 't650p']
   };
   
-  // Check if we have a specific image for this bank+hardware combination
   if (supportedBanks.includes(acquirer)) {
     if (hardwareBrand === 'ingenico' && supportedModels.ingenico.includes(hardwareModel)) {
       return `${acquirer}-ingenico-move-5000.jpg`;
@@ -207,7 +201,6 @@ const getTerminalImage = (terminal) => {
     }
   }
   
-  // Default image for all other cases
   return 'default-terminal.jpg';
 };
 
@@ -226,14 +219,11 @@ export default function TerminalMap() {
   const [vasState, setVasState] = useState([...vasCompatibility]);
   const [filteredTerminals, setFilteredTerminals] = useState([]);
   const [activeFilterSection, setActiveFilterSection] = useState(null);
-  
-  // Draggable state
   const [position, setPosition] = useState({ x: 16, y: 16 });
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const filterPanelRef = useRef(null);
 
-  // Create custom icon with the correct image
   const createCustomIcon = (terminal) => {
     const statusColor = terminal.status === 'online' ? 'border-green-500' : 'border-red-500';
     const terminalImage = getTerminalImage(terminal);
@@ -324,7 +314,6 @@ export default function TerminalMap() {
     posConnectionsState
   ]);
 
-  // Improved drag handlers with useCallback
   const handleMouseDown = useCallback((e) => {
     if (!e.target.closest('input, button, select, label')) {
       setIsDragging(true);
@@ -371,7 +360,6 @@ export default function TerminalMap() {
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  // Filter toggle functions
   const toggleOrbitType = (type) => {
     setSelectedOrbitTypes(prev => 
       prev.includes(type) 
@@ -935,8 +923,8 @@ export default function TerminalMap() {
               icon={createCustomIcon(terminal)}
             >
               <Popup>
-                <div className="w-64">
-                  <div className="flex justify-between items-start mb-3">
+                <div className="w-72">
+                  <div className="flex justify-between items-center mb-3">
                     <div className="flex items-center">
                       {merchantIcons[terminal.merchantType]}
                       <h3 className="font-medium ml-2">{terminal.merchantType}</h3>
@@ -950,64 +938,67 @@ export default function TerminalMap() {
                     </span>
                   </div>
                   
-                  <div className="text-sm text-gray-600 space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Terminal ID:</span>
-                      <span>{terminal.id}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Location:</span>
-                      <span>{terminal.location}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Acquirer:</span>
-                      <span className="font-medium">{acquirers.find(a => a.id === terminal.acquirer)?.label}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Hardware:</span>
-                      <span>{hardwareLabel}</span>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-xs text-gray-500">Terminal ID</p>
+                        <p className="text-sm font-medium">{terminal.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Hardware</p>
+                        <p className="text-sm font-medium">{hardwareLabel}</p>
+                      </div>
                     </div>
                     
-                    <div className="pt-3 mt-3 border-t border-gray-100">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-500 font-medium">VAS Features</span>
-                        <span className="text-xs text-gray-400">
-                          {terminal.vasFeatures.filter(f => f.enabled).length}/{terminal.vasFeatures.length} enabled
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {terminal.vasFeatures.map(feature => (
-                          <div key={feature.id} className="flex items-center justify-between">
-                            <span className="text-sm">{feature.label}</span>
+                    <div className="border-t border-gray-100 pt-3">
+                      <div className="space-y-3">
+                        {vasState.map(vasGroup => (
+                          <div key={vasGroup.id} className="border border-gray-200 rounded-lg overflow-hidden">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleVasFeature(terminal.id, feature.id);
+                                toggleVasGroup(vasGroup.id);
                               }}
-                              className={`relative inline-flex items-center h-5 rounded-full w-10 transition-colors focus:outline-none ${
-                                feature.enabled ? 'bg-green-500' : 'bg-gray-300'
-                              }`}
+                              className="w-full flex justify-between items-center p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                             >
-                              <span
-                                className={`inline-block w-4 h-4 transform transition-transform rounded-full bg-white ${
-                                  feature.enabled ? 'translate-x-5' : 'translate-x-1'
-                                }`}
-                              />
+                              <div className="flex items-center">
+                                {vasGroup.icon}
+                                <span>{vasGroup.label}</span>
+                              </div>
+                              {vasGroup.expanded ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
                             </button>
+                            
+                            {vasGroup.expanded && (
+                              <div className="p-2 pt-0 space-y-2">
+                                {vasGroup.children?.map(vasItem => {
+                                  const terminalVas = terminal.vasFeatures.find(f => f.id === vasItem.id);
+                                  if (!terminalVas) return null;
+                                  
+                                  return (
+                                    <div key={vasItem.id} className="flex items-center justify-between pl-6">
+                                      <span className="text-sm">{vasItem.label}</span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleVasFeature(terminal.id, vasItem.id);
+                                        }}
+                                        className={`relative inline-flex items-center h-5 rounded-full w-10 transition-colors focus:outline-none ${
+                                          terminalVas.enabled ? 'bg-green-500' : 'bg-gray-300'
+                                        }`}
+                                      >
+                                        <span
+                                          className={`inline-block w-4 h-4 transform transition-transform rounded-full bg-white ${
+                                            terminalVas.enabled ? 'translate-x-5' : 'translate-x-1'
+                                          }`}
+                                        />
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         ))}
-                      </div>
-                    </div>
-                    
-                    <div className="pt-3 mt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
-                      <div>
-                        <p className="text-xs text-gray-500">Volume</p>
-                        <p className="font-medium">${terminal.volume.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Uptime</p>
-                        <p className="font-medium">{terminal.uptime.toFixed(1)}%</p>
                       </div>
                     </div>
                   </div>

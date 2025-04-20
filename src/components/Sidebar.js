@@ -27,14 +27,16 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 bg-gray-900 text-white flex flex-col">
-      <div className="p-6 pb-2">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-            <span className="text-white font-bold">TM</span>
-          </div>
-          <span className="text-xl font-bold tracking-tight">TerminalPro</span>
-        </div>
-      </div>
+      {/* Logo Section */}
+      <div className="overflow-hidden h-28 flex justify-center items-center">
+  <img 
+    src="/images/Orbit Logo/Orbit_Logo.png" 
+    alt="Orbit Logo"
+    className="scale-125 object-contain" 
+  />
+</div>
+
+      {/* Navigation Links */}
       <nav className="flex-1 px-4 py-6 space-y-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -63,6 +65,8 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Footer User Info */}
       <div className="p-4 border-t border-gray-800">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
@@ -70,7 +74,7 @@ export default function Sidebar() {
           </div>
           <div>
             <p className="text-sm font-medium">Admin User</p>
-            <p className="text-xs text-gray-400">admin@terminalpro.com</p>
+            <p className="text-xs text-gray-400">admin@orbit.com</p>
           </div>
         </div>
       </div>
