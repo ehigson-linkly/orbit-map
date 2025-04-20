@@ -49,9 +49,9 @@ const posConnections = [
     icon: <FiLink className="mr-2 text-green-500" />,
     expanded: false,
     children: [
-      { id: 'r_series', label: 'R-Series', icon: <FiLink className="mr-2 text-green-400" /> },
-      { id: 'vend', label: 'Vend', icon: <FiLink className="mr-2 text-green-400" /> },
-      { id: 'kounta', label: 'Kounta', icon: <FiLink className="mr-2 text-green-400" /> }
+      { id: 'r_series', label: 'R-Series' },
+      { id: 'vend', label: 'Vend' },
+      { id: 'kounta', label: 'Kounta' }
     ]
   },
   {
@@ -60,8 +60,8 @@ const posConnections = [
     icon: <FiLink className="mr-2 text-green-500" />,
     expanded: false,
     children: [
-      { id: 'retail_xstore', label: 'Retail Xstore', icon: <FiLink className="mr-2 text-green-400" /> },
-      { id: 'micros', label: 'Micros', icon: <FiLink className="mr-2 text-green-400" /> }
+      { id: 'retail_xstore', label: 'Retail Xstore' },
+      { id: 'micros', label: 'Micros' }
     ]
   },
   { id: 'retail_directions', label: 'Retail Directions', icon: <FiLink className="mr-2 text-green-500" /> },
@@ -78,9 +78,9 @@ const terminalHardware = [
     icon: <FiHardDrive className="mr-2 text-yellow-500" />,
     expanded: false,
     children: [
-      { id: 'move5000', label: 'Move5000', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 'dx8000', label: 'DX8000', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 'axium', label: 'Axium', icon: <FiHardDrive className="mr-2 text-yellow-400" /> }
+      { id: 'move5000', label: 'Move5000' },
+      { id: 'dx8000', label: 'DX8000' },
+      { id: 'axium', label: 'Axium' }
     ]
   },
   {
@@ -89,9 +89,9 @@ const terminalHardware = [
     icon: <FiHardDrive className="mr-2 text-yellow-500" />,
     expanded: false,
     children: [
-      { id: 't650m', label: 'T650M', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 't650p', label: 'T650P', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 'victa', label: 'Victa', icon: <FiHardDrive className="mr-2 text-yellow-400" /> }
+      { id: 't650m', label: 'T650M' },
+      { id: 't650p', label: 'T650P' },
+      { id: 'victa', label: 'Victa' }
     ]
   },
   {
@@ -100,9 +100,9 @@ const terminalHardware = [
     icon: <FiHardDrive className="mr-2 text-yellow-500" />,
     expanded: false,
     children: [
-      { id: 'a920max', label: 'A920Max', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 'a960', label: 'A960', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 'a3700', label: 'A3700', icon: <FiHardDrive className="mr-2 text-yellow-400" /> }
+      { id: 'a920max', label: 'A920Max' },
+      { id: 'a960', label: 'A960' },
+      { id: 'a3700', label: 'A3700' }
     ]
   },
   {
@@ -111,9 +111,9 @@ const terminalHardware = [
     icon: <FiHardDrive className="mr-2 text-yellow-500" />,
     expanded: false,
     children: [
-      { id: 'pro', label: 'Pro', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 's1f3', label: 'S1F3', icon: <FiHardDrive className="mr-2 text-yellow-400" /> },
-      { id: 's1e2', label: 'S1E2', icon: <FiHardDrive className="mr-2 text-yellow-400" /> }
+      { id: 'pro', label: 'Pro' },
+      { id: 's1f3', label: 'S1F3' },
+      { id: 's1e2', label: 'S1E2' }
     ]
   }
 ];
@@ -125,10 +125,10 @@ const vasCompatibility = [
     icon: <FiCreditCard className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
-      { id: 'epay', label: 'EPAY', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'afterpay', label: 'AfterPay', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'alipay', label: 'AliPay', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'wechat', label: 'WeChat', icon: <FiCreditCard className="mr-2 text-indigo-400" /> }
+      { id: 'epay', label: 'EPAY' },
+      { id: 'afterpay', label: 'AfterPay' },
+      { id: 'alipay', label: 'AliPay' },
+      { id: 'wechat', label: 'WeChat' }
     ]
   },
   {
@@ -137,10 +137,10 @@ const vasCompatibility = [
     icon: <FiCreditCard className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
-      { id: 'qantas', label: 'Qantas Loyalty', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'velocity', label: 'Velocity Frequent Flyer', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'flybuys', label: 'Coles Flybuys', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'everyday', label: 'Woolworths Everyday Rewards', icon: <FiCreditCard className="mr-2 text-indigo-400" /> }
+      { id: 'qantas', label: 'Qantas Loyalty' },
+      { id: 'velocity', label: 'Velocity Frequent Flyer' },
+      { id: 'flybuys', label: 'Coles Flybuys' },
+      { id: 'everyday', label: 'Woolworths Everyday Rewards' }
     ]
   },
   {
@@ -149,9 +149,9 @@ const vasCompatibility = [
     icon: <FiCreditCard className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
-      { id: 'blackhawk', label: 'Blackhawk', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'incomm', label: 'Incomm', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'givex', label: 'GIVEX', icon: <FiCreditCard className="mr-2 text-indigo-400" /> }
+      { id: 'blackhawk', label: 'Blackhawk' },
+      { id: 'incomm', label: 'Incomm' },
+      { id: 'givex', label: 'GIVEX' }
     ]
   },
   {
@@ -160,8 +160,8 @@ const vasCompatibility = [
     icon: <FiCreditCard className="mr-2 text-indigo-500" />,
     expanded: false,
     children: [
-      { id: 'trurating', label: 'TruRating', icon: <FiCreditCard className="mr-2 text-indigo-400" /> },
-      { id: 'yumpingo', label: 'YumPingo', icon: <FiCreditCard className="mr-2 text-indigo-400" /> }
+      { id: 'trurating', label: 'TruRating' },
+      { id: 'yumpingo', label: 'YumPingo' }
     ]
   }
 ];
@@ -193,6 +193,64 @@ export default function TerminalMap() {
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const filterPanelRef = useRef(null);
+
+  // Helper functions for terminal attributes
+  const getRandomOrbitType = (id) => {
+    const types = ['standalone', 'standalone_plus', 'integrated', 'integrated_plus'];
+    return types[id.charCodeAt(3) % 4];
+  };
+
+  const getRandomAcquirer = (id) => {
+    const acqs = ['cba', 'anz', 'westpac', 'nab', 'fiserv', 'first_data'];
+    return acqs[id.charCodeAt(4) % 6];
+  };
+
+  const getRandomPosConnection = (id) => {
+    const allPosOptions = posConnectionsState.flatMap(conn => 
+      conn.children ? [conn.id, ...conn.children.map(c => c.id)] : [conn.id]
+    );
+    return allPosOptions[id.charCodeAt(5) % allPosOptions.length];
+  };
+
+  const getRandomHardware = (id) => {
+    const allHardwareOptions = hardwareState.flatMap(hw => 
+      hw.children ? [hw.id, ...hw.children.map(c => c.id)] : [hw.id]
+    );
+    return allHardwareOptions[id.charCodeAt(6) % allHardwareOptions.length];
+  };
+
+  const getRandomVas = (id) => {
+    const allVasOptions = vasState.flatMap(vas => 
+      vas.children ? [vas.id, ...vas.children.map(c => c.id)] : [vas.id]
+    );
+    return allVasOptions[id.charCodeAt(7) % allVasOptions.length];
+  };
+
+  const getRandomFeature = (id) => {
+    const features = ['acquirer_redundancy', 'ai_fraud', 'ai_routing'];
+    return features[id.charCodeAt(8) % 3];
+  };
+
+  // Create custom icon function with centered logo
+  const createCustomIcon = (terminal) => {
+    const statusColor = terminal.status === 'online' ? 'border-green-500' : 'border-red-500';
+    
+    return L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div class="relative">
+          <div class="w-10 h-10 rounded-full bg-white border-4 ${statusColor} shadow-md flex items-center justify-center">
+            <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
+              <img src="/images/terminals/default-terminal.jpg" alt="Terminal" class="w-full h-full object-cover" />
+            </div>
+          </div>
+        </div>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
+      popupAnchor: [0, -40]
+    });
+  };
 
   useEffect(() => {
     setMapReady(true);
@@ -256,7 +314,6 @@ export default function TerminalMap() {
 
   // Improved drag handlers
   const handleMouseDown = (e) => {
-    // Only start drag if clicking on the header or empty space
     if (!e.target.closest('input, button, select, label')) {
       setIsDragging(true);
       dragOffset.current = {
@@ -274,7 +331,6 @@ export default function TerminalMap() {
     const newX = e.clientX - dragOffset.current.x;
     const newY = e.clientY - dragOffset.current.y;
     
-    // Boundary checks
     const maxX = window.innerWidth - (filterPanelRef.current?.offsetWidth || 0);
     const maxY = window.innerHeight - (filterPanelRef.current?.offsetHeight || 0);
     
@@ -302,43 +358,6 @@ export default function TerminalMap() {
       };
     }
   }, [isDragging]);
-
-  // Helper functions for terminal attributes
-  const getRandomOrbitType = (id) => {
-    const types = ['standalone', 'standalone_plus', 'integrated', 'integrated_plus'];
-    return types[id.charCodeAt(3) % 4];
-  };
-
-  const getRandomAcquirer = (id) => {
-    const acqs = ['cba', 'anz', 'westpac', 'nab', 'fiserv', 'first_data'];
-    return acqs[id.charCodeAt(4) % 6];
-  };
-
-  const getRandomPosConnection = (id) => {
-    const allPosOptions = posConnectionsState.flatMap(conn => 
-      conn.children ? [conn.id, ...conn.children.map(c => c.id)] : [conn.id]
-    );
-    return allPosOptions[id.charCodeAt(5) % allPosOptions.length];
-  };
-
-  const getRandomHardware = (id) => {
-    const allHardwareOptions = hardwareState.flatMap(hw => 
-      hw.children ? [hw.id, ...hw.children.map(c => c.id)] : [hw.id]
-    );
-    return allHardwareOptions[id.charCodeAt(6) % allHardwareOptions.length];
-  };
-
-  const getRandomVas = (id) => {
-    const allVasOptions = vasState.flatMap(vas => 
-      vas.children ? [vas.id, ...vas.children.map(c => c.id)] : [vas.id]
-    );
-    return allVasOptions[id.charCodeAt(7) % allVasOptions.length];
-  };
-
-  const getRandomFeature = (id) => {
-    const features = ['acquirer_redundancy', 'ai_fraud', 'ai_routing'];
-    return features[id.charCodeAt(8) % 3];
-  };
 
   // Filter toggle functions
   const toggleOrbitType = (type) => {
@@ -464,7 +483,16 @@ export default function TerminalMap() {
 
   return (
     <div className="h-full relative">
-      {/* Draggable Filter Panel */}
+      <style jsx global>{`
+        .custom-marker {
+          background: transparent !important;
+          border: none !important;
+        }
+        .custom-marker img {
+          border-radius: 50%;
+        }
+      `}</style>
+      
       <div 
         ref={filterPanelRef}
         className={`absolute z-10 bg-white rounded-xl shadow-lg border border-gray-200 transition-all duration-200 ${
@@ -484,7 +512,6 @@ export default function TerminalMap() {
               <h3 className="text-lg font-semibold text-gray-800 flex items-center">
                 <FiFilter className="mr-2 text-blue-500" /> 
                 <span className="flex-1">Filters</span>
-                <FiMove className="text-gray-400 hover:text-gray-600 cursor-move" />
               </h3>
               <button 
                 onClick={() => setShowFilters(false)}
@@ -495,7 +522,6 @@ export default function TerminalMap() {
             </div>
             
             <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-              {/* ORBIT Type Filter */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <button 
                   onClick={() => toggleFilterSection('orbit')}
@@ -518,8 +544,7 @@ export default function TerminalMap() {
                           onChange={() => toggleOrbitType(type.id)}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
-                        <label htmlFor={`orbit-${type.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                          {type.icon}
+                        <label htmlFor={`orbit-${type.id}`} className="ml-2 text-sm text-gray-700">
                           {type.label}
                         </label>
                       </div>
@@ -528,7 +553,6 @@ export default function TerminalMap() {
                 )}
               </div>
               
-              {/* Acquirers Filter */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <button 
                   onClick={() => toggleFilterSection('acquirers')}
@@ -551,8 +575,7 @@ export default function TerminalMap() {
                           onChange={() => toggleAcquirer(acquirer.id)}
                           className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                         />
-                        <label htmlFor={`acquirer-${acquirer.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                          {acquirer.icon}
+                        <label htmlFor={`acquirer-${acquirer.id}`} className="ml-2 text-sm text-gray-700">
                           {acquirer.label}
                         </label>
                       </div>
@@ -561,7 +584,6 @@ export default function TerminalMap() {
                 )}
               </div>
               
-              {/* POS Connections Filter */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <button 
                   onClick={() => toggleFilterSection('pos')}
@@ -605,8 +627,7 @@ export default function TerminalMap() {
                               }}
                               className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                             />
-                            <label htmlFor={`pos-${connection.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                              {connection.icon}
+                            <label htmlFor={`pos-${connection.id}`} className="ml-2 text-sm text-gray-700">
                               {connection.label}
                             </label>
                           </div>
@@ -634,8 +655,7 @@ export default function TerminalMap() {
                                   onChange={() => togglePosConnection(child.id)}
                                   className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                                 />
-                                <label htmlFor={`pos-${child.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                                  {child.icon}
+                                <label htmlFor={`pos-${child.id}`} className="ml-2 text-sm text-gray-700">
                                   {child.label}
                                 </label>
                               </div>
@@ -648,7 +668,6 @@ export default function TerminalMap() {
                 )}
               </div>
               
-              {/* Terminal Hardware Filter */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <button 
                   onClick={() => toggleFilterSection('hardware')}
@@ -692,8 +711,7 @@ export default function TerminalMap() {
                               }}
                               className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
                             />
-                            <label htmlFor={`hw-${hardware.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                              {hardware.icon}
+                            <label htmlFor={`hw-${hardware.id}`} className="ml-2 text-sm text-gray-700">
                               {hardware.label}
                             </label>
                           </div>
@@ -721,8 +739,7 @@ export default function TerminalMap() {
                                   onChange={() => toggleHardware(child.id)}
                                   className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
                                 />
-                                <label htmlFor={`hw-${child.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                                  {child.icon}
+                                <label htmlFor={`hw-${child.id}`} className="ml-2 text-sm text-gray-700">
                                   {child.label}
                                 </label>
                               </div>
@@ -735,7 +752,6 @@ export default function TerminalMap() {
                 )}
               </div>
               
-              {/* VAS Compatibility Filter */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <button 
                   onClick={() => toggleFilterSection('vas')}
@@ -779,8 +795,7 @@ export default function TerminalMap() {
                               }}
                               className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                             />
-                            <label htmlFor={`vas-${vas.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                              {vas.icon}
+                            <label htmlFor={`vas-${vas.id}`} className="ml-2 text-sm text-gray-700">
                               {vas.label}
                             </label>
                           </div>
@@ -808,8 +823,7 @@ export default function TerminalMap() {
                                   onChange={() => toggleVas(child.id)}
                                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                                 />
-                                <label htmlFor={`vas-${child.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                                  {child.icon}
+                                <label htmlFor={`vas-${child.id}`} className="ml-2 text-sm text-gray-700">
                                   {child.label}
                                 </label>
                               </div>
@@ -822,7 +836,6 @@ export default function TerminalMap() {
                 )}
               </div>
               
-              {/* Terminal Features Filter */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <button 
                   onClick={() => toggleFilterSection('features')}
@@ -845,8 +858,7 @@ export default function TerminalMap() {
                           onChange={() => toggleFeature(feature.id)}
                           className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                         />
-                        <label htmlFor={`feature-${feature.id}`} className="ml-2 text-sm text-gray-700 flex items-center">
-                          {feature.icon}
+                        <label htmlFor={`feature-${feature.id}`} className="ml-2 text-sm text-gray-700">
                           {feature.label}
                         </label>
                       </div>
@@ -872,9 +884,8 @@ export default function TerminalMap() {
         )}
       </div>
       
-      {/* Map */}
       <MapContainer
-        center={[-25.2744, 133.7751]} // Center of Australia
+        center={[-25.2744, 133.7751]}
         zoom={4}
         style={{ height: '100%', width: '100%' }}
       >
@@ -904,9 +915,13 @@ export default function TerminalMap() {
               hw.children 
                 ? [{ id: hw.id, label: hw.label }, ...hw.children.map(c => ({ id: c.id, label: c.label }))]
                 : [{ id: hw.id, label: hw.label }]
+
+
+// === CONTINUED ===
+
             )
             .find(item => item.id === hardware)?.label;
-          
+
           const vasLabel = vasState
             .flatMap(vas => 
               vas.children 
@@ -921,6 +936,7 @@ export default function TerminalMap() {
             <Marker
               key={terminal.id}
               position={[terminal.lat, terminal.lng]}
+              icon={createCustomIcon(terminal)}
             >
               <Popup>
                 <div className="w-56">
@@ -929,13 +945,9 @@ export default function TerminalMap() {
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       terminal.status === 'online' 
                         ? 'bg-green-100 text-green-800' 
-                        : terminal.status === 'maintenance'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : terminal.status === 'low_battery'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-red-100 text-red-800'
+                        : 'bg-red-100 text-red-800'
                     }`}>
-                      {terminal.status.replace('_', ' ')}
+                      {terminal.status}
                     </span>
                   </div>
                   <div className="text-sm text-gray-600">

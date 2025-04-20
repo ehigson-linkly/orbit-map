@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // ✅ added Navigate
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
@@ -16,7 +16,9 @@ export default function App() {
             <Header />
             <main className="flex-1 p-6 overflow-auto">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                {/* 👇 Redirect root to /terminal-map */}
+                <Route path="/" element={<Navigate to="/terminal-map" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/terminal-map" element={<TerminalMap />} />
               </Routes>
             </main>
