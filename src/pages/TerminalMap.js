@@ -344,8 +344,8 @@ export default function TerminalMap() {
         }
       `}</style>
       
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 h-full">
+      <div className="flex flex-1 overflow-hidden relative">
+        <div className="flex-1 h-full mr-80">
           <MapContainer
             center={[-25.2744, 133.7751]}
             zoom={4}
@@ -460,32 +460,34 @@ export default function TerminalMap() {
           </MapContainer>
         </div>
 
-        <div className="w-80 border-l border-gray-200 flex flex-col">
-          <TerminalFilters
-            terminals={terminals}
-            filteredTerminals={filteredTerminals}
-            selectedOrbitTypes={selectedOrbitTypes}
-            setSelectedOrbitTypes={setSelectedOrbitTypes}
-            selectedAcquirers={selectedAcquirers}
-            setSelectedAcquirers={setSelectedAcquirers}
-            selectedPosConnections={selectedPosConnections}
-            setSelectedPosConnections={setSelectedPosConnections}
-            selectedHardware={selectedHardware}
-            setSelectedHardware={setSelectedHardware}
-            selectedVas={selectedVas}
-            setSelectedVas={setSelectedVas}
-            selectedFeatures={selectedFeatures}
-            setSelectedFeatures={setSelectedFeatures}
-            posConnectionsState={posConnectionsState}
-            setPosConnectionsState={setPosConnectionsState}
-            hardwareState={hardwareState}
-            setHardwareState={setHardwareState}
-            vasState={vasState}
-            setVasState={setVasState}
-            activeFilterSection={activeFilterSection}
-            setActiveFilterSection={setActiveFilterSection}
-          />
-        </div>
+        <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-2 border-gray-200 flex flex-col z-[1000] shadow-lg">
+  <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+  <TerminalFilters
+    terminals={terminals}
+    filteredTerminals={filteredTerminals}
+    selectedOrbitTypes={selectedOrbitTypes}
+    setSelectedOrbitTypes={setSelectedOrbitTypes}
+    selectedAcquirers={selectedAcquirers}
+    setSelectedAcquirers={setSelectedAcquirers}
+    selectedPosConnections={selectedPosConnections}
+    setSelectedPosConnections={setSelectedPosConnections}
+    selectedHardware={selectedHardware}
+    setSelectedHardware={setSelectedHardware}
+    selectedVas={selectedVas}
+    setSelectedVas={setSelectedVas}
+    selectedFeatures={selectedFeatures}
+    setSelectedFeatures={setSelectedFeatures}
+    posConnectionsState={posConnectionsState}
+    setPosConnectionsState={setPosConnectionsState}
+    hardwareState={hardwareState}
+    setHardwareState={setHardwareState}
+    vasState={vasState}
+    setVasState={setVasState}
+    activeFilterSection={activeFilterSection}
+    setActiveFilterSection={setActiveFilterSection}
+  />
+</div>
+
       </div>
     </div>
   );
