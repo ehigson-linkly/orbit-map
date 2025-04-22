@@ -198,13 +198,16 @@ export default function TerminalFilters({
   selectedVas,
   setSelectedVas,
   selectedFeatures,
-  setSelectedFeatures
+  setSelectedFeatures,
+  posConnectionsState,
+  setPosConnectionsState,
+  hardwareState,
+  setHardwareState,
+  vasState,
+  setVasState,
+  activeFilterSection,
+  setActiveFilterSection
 }) {
-  const [activeFilterSection, setActiveFilterSection] = useState(null);
-  const [posConnectionsState, setPosConnectionsState] = useState([...posConnections]);
-  const [hardwareState, setHardwareState] = useState([...terminalHardware]);
-  const [vasState, setVasState] = useState([...vasCompatibility]);
-
   const toggleOrbitType = (type) => {
     setSelectedOrbitTypes(prev => 
       prev.includes(type) 
@@ -315,8 +318,8 @@ export default function TerminalFilters({
   };
 
   return (
-    <div className="w-72 bg-white border-l border-gray-200 h-full overflow-y-auto">
-      <div className="p-4">
+    <div className="h-full flex flex-col">
+      <div className="p-4 flex-1 overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center">
             <FiFilter className="mr-2 text-blue-500" /> 
@@ -670,12 +673,12 @@ export default function TerminalFilters({
             )}
           </div>
         </div>
-        
-        <div className="pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
-            Showing {filteredTerminals.length} of {terminals.length} terminals
-          </p>
-        </div>
+      </div>
+      
+      <div className="p-4 border-t border-gray-200">
+        <p className="text-sm text-gray-500">
+          Showing {filteredTerminals.length} of {terminals.length} terminals
+        </p>
       </div>
     </div>
   );

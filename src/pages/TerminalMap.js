@@ -345,33 +345,6 @@ export default function TerminalMap() {
       `}</style>
       
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-80 border-r border-gray-200 flex flex-col">
-          <TerminalFilters
-            terminals={terminals}
-            filteredTerminals={filteredTerminals}
-            selectedOrbitTypes={selectedOrbitTypes}
-            setSelectedOrbitTypes={setSelectedOrbitTypes}
-            selectedAcquirers={selectedAcquirers}
-            setSelectedAcquirers={setSelectedAcquirers}
-            selectedPosConnections={selectedPosConnections}
-            setSelectedPosConnections={setSelectedPosConnections}
-            selectedHardware={selectedHardware}
-            setSelectedHardware={setSelectedHardware}
-            selectedVas={selectedVas}
-            setSelectedVas={setSelectedVas}
-            selectedFeatures={selectedFeatures}
-            setSelectedFeatures={setSelectedFeatures}
-            posConnectionsState={posConnectionsState}
-            setPosConnectionsState={setPosConnectionsState}
-            hardwareState={hardwareState}
-            setHardwareState={setHardwareState}
-            vasState={vasState}
-            setVasState={setVasState}
-            activeFilterSection={activeFilterSection}
-            setActiveFilterSection={setActiveFilterSection}
-          />
-        </div>
-        
         <div className="flex-1 h-full">
           <MapContainer
             center={[-25.2744, 133.7751]}
@@ -485,6 +458,33 @@ export default function TerminalMap() {
               );
             })}
           </MapContainer>
+        </div>
+
+        <div className="w-80 border-l border-gray-200 flex flex-col">
+          <TerminalFilters
+            terminals={terminals}
+            filteredTerminals={filteredTerminals}
+            selectedOrbitTypes={selectedOrbitTypes}
+            setSelectedOrbitTypes={setSelectedOrbitTypes}
+            selectedAcquirers={selectedAcquirers}
+            setSelectedAcquirers={setSelectedAcquirers}
+            selectedPosConnections={selectedPosConnections}
+            setSelectedPosConnections={setSelectedPosConnections}
+            selectedHardware={selectedHardware}
+            setSelectedHardware={setSelectedHardware}
+            selectedVas={selectedVas}
+            setSelectedVas={setSelectedVas}
+            selectedFeatures={selectedFeatures}
+            setSelectedFeatures={setSelectedFeatures}
+            posConnectionsState={posConnectionsState}
+            setPosConnectionsState={setPosConnectionsState}
+            hardwareState={hardwareState}
+            setHardwareState={setHardwareState}
+            vasState={vasState}
+            setVasState={setVasState}
+            activeFilterSection={activeFilterSection}
+            setActiveFilterSection={setActiveFilterSection}
+          />
         </div>
       </div>
     </div>
