@@ -122,6 +122,9 @@ export default function TerminalMap() {
   const [selectedVas, setSelectedVas] = useState([]);
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [expandedVasGroups, setExpandedVasGroups] = useState({});
+  const [merchantSearch, setMerchantSearch] = useState('');
+  const [industrySearch, setIndustrySearch] = useState('');
+  
   const [posConnectionsState, setPosConnectionsState] = useState([
     {
       id: 'lightspeed',
@@ -242,6 +245,20 @@ export default function TerminalMap() {
 
     let filtered = [...terminals];
     
+    // Apply search filters first
+    if (merchantSearch) {
+      filtered = filtered.filter(terminal => 
+        terminal.merchantName.toLowerCase().includes(merchantSearch.toLowerCase())
+      );
+    }
+    
+    if (industrySearch) {
+      filtered = filtered.filter(terminal => 
+        terminal.merchantType.toLowerCase().includes(industrySearch.toLowerCase())
+      );
+    }
+    
+    // Then apply other filters
     filtered = filtered.filter(terminal => 
       selectedOrbitTypes.length === 0 || selectedOrbitTypes.includes(terminal.orbitType)
     );
@@ -292,7 +309,9 @@ export default function TerminalMap() {
     selectedHardware,
     selectedVas,
     selectedFeatures,
-    terminals
+    terminals,
+    merchantSearch,
+    industrySearch
   ]);
 
   const toggleVasGroupInPopup = (groupId) => {
@@ -461,33 +480,36 @@ export default function TerminalMap() {
         </div>
 
         <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-2 border-gray-200 flex flex-col z-[1000] shadow-lg">
-  <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
-  <TerminalFilters
-    terminals={terminals}
-    filteredTerminals={filteredTerminals}
-    selectedOrbitTypes={selectedOrbitTypes}
-    setSelectedOrbitTypes={setSelectedOrbitTypes}
-    selectedAcquirers={selectedAcquirers}
-    setSelectedAcquirers={setSelectedAcquirers}
-    selectedPosConnections={selectedPosConnections}
-    setSelectedPosConnections={setSelectedPosConnections}
-    selectedHardware={selectedHardware}
-    setSelectedHardware={setSelectedHardware}
-    selectedVas={selectedVas}
-    setSelectedVas={setSelectedVas}
-    selectedFeatures={selectedFeatures}
-    setSelectedFeatures={setSelectedFeatures}
-    posConnectionsState={posConnectionsState}
-    setPosConnectionsState={setPosConnectionsState}
-    hardwareState={hardwareState}
-    setHardwareState={setHardwareState}
-    vasState={vasState}
-    setVasState={setVasState}
-    activeFilterSection={activeFilterSection}
-    setActiveFilterSection={setActiveFilterSection}
-  />
-</div>
-
+          <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+          <TerminalFilters
+            terminals={terminals}
+            filteredTerminals={filteredTerminals}
+            selectedOrbitTypes={selectedOrbitTypes}
+            setSelectedOrbitTypes={setSelectedOrbitTypes}
+            selectedAcquirers={selectedAcquirers}
+            setSelectedAcquirers={setSelectedAcquirers}
+            selectedPosConnections={selectedPosConnections}
+            setSelectedPosConnections={setSelectedPosConnections}
+            selectedHardware={selectedHardware}
+            setSelectedHardware={setSelectedHardware}
+            selectedVas={selectedVas}
+            setSelectedVas={setSelectedVas}
+            selectedFeatures={selectedFeatures}
+            setSelectedFeatures={setSelectedFeatures}
+            posConnectionsState={posConnectionsState}
+            setPosConnectionsState={setPosConnectionsState}
+            hardwareState={hardwareState}
+            setHardwareState={setHardwareState}
+            vasState={vasState}
+            setVasState={setVasState}
+            activeFilterSection={activeFilterSection}
+            setActiveFilterSection={setActiveFilterSection}
+            merchantSearch={merchantSearch}
+            setMerchantSearch={setMerchantSearch}
+            industrySearch={industrySearch}
+            setIndustrySearch={setIndustrySearch}
+          />
+        </div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   FiMove,
   FiWifi,
   FiActivity,
+  FiSearch
 } from 'react-icons/fi';
 
 const orbitTypes = [
@@ -60,7 +61,11 @@ export default function TerminalFilters({
   vasState,
   setVasState,
   activeFilterSection,
-  setActiveFilterSection
+  setActiveFilterSection,
+  merchantSearch,
+  setMerchantSearch,
+  industrySearch,
+  setIndustrySearch
 }) {
   const toggleOrbitType = (type) => {
     setSelectedOrbitTypes(prev => 
@@ -179,6 +184,35 @@ export default function TerminalFilters({
             <FiFilter className="mr-2 text-blue-500" /> 
             <span className="flex-1">Filters</span>
           </h3>
+        </div>
+        
+        {/* Search Bars */}
+        <div className="space-y-3 mb-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Merchant"
+              value={merchantSearch}
+              onChange={(e) => setMerchantSearch(e.target.value)}
+            />
+          </div>
+          
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Industry"
+              value={industrySearch}
+              onChange={(e) => setIndustrySearch(e.target.value)}
+            />
+          </div>
         </div>
         
         <div className="space-y-3">
