@@ -1,20 +1,22 @@
-import React, { useState, useContext } from 'react';
-import { TerminalContext } from '../context/TerminalContext';
+import React, { useState } from 'react';
 import { 
   FiFilter, 
-  FiX, 
-  FiChevronDown, 
-  FiChevronUp,
   FiDatabase,
   FiCreditCard,
   FiLink,
   FiHardDrive,
   FiServer,
+  FiChevronDown,
+  FiChevronUp,
   FiShoppingCart,
   FiAward,
   FiGift,
   FiBarChart2,
-  FiDollarSign
+  FiDollarSign,
+  FiShield,
+  FiMove,
+  FiWifi,
+  FiActivity,
 } from 'react-icons/fi';
 
 const orbitTypes = [
@@ -176,13 +178,15 @@ const vasCompatibility = [
 
 const terminalFeatures = [
   { id: 'acquirer_redundancy', label: 'Acquirer Redundancy', icon: <FiServer className="mr-2 text-pink-500" /> },
-  { id: 'ai_fraud', label: 'AI Fraud Detection', icon: <FiServer className="mr-2 text-pink-500" /> },
-  { id: 'ai_routing', label: 'AI SmartRouting (LCR)', icon: <FiServer className="mr-2 text-pink-500" /> },
-  { id: 'wifi', label: 'WiFi Connectivity', icon: <FiServer className="mr-2 text-pink-500" /> },
-  { id: 'analytics', label: 'Advanced Analytics', icon: <FiServer className="mr-2 text-pink-500" /> }
+  { id: 'ai_fraud', label: 'AI Fraud Detection', icon: <FiShield className="mr-2 text-pink-500" /> },
+  { id: 'ai_routing', label: 'AI SmartRouting (LCR)', icon: <FiMove className="mr-2 text-pink-500" /> },
+  { id: 'wifi', label: 'WiFi Connectivity', icon: <FiWifi className="mr-2 text-pink-500" /> },
+  { id: 'analytics', label: 'Advanced Analytics', icon: <FiActivity className="mr-2 text-pink-500" /> }
 ];
 
 export default function TerminalFilters({
+  terminals,
+  filteredTerminals,
   selectedOrbitTypes,
   setSelectedOrbitTypes,
   selectedAcquirers,
@@ -194,18 +198,13 @@ export default function TerminalFilters({
   selectedVas,
   setSelectedVas,
   selectedFeatures,
-  setSelectedFeatures,
-  terminals,
-  filteredTerminals,
-  posConnectionsState,
-  setPosConnectionsState,
-  hardwareState,
-  setHardwareState,
-  vasState,
-  setVasState,
-  activeFilterSection,
-  setActiveFilterSection
+  setSelectedFeatures
 }) {
+  const [activeFilterSection, setActiveFilterSection] = useState(null);
+  const [posConnectionsState, setPosConnectionsState] = useState([...posConnections]);
+  const [hardwareState, setHardwareState] = useState([...terminalHardware]);
+  const [vasState, setVasState] = useState([...vasCompatibility]);
+
   const toggleOrbitType = (type) => {
     setSelectedOrbitTypes(prev => 
       prev.includes(type) 
@@ -316,7 +315,7 @@ export default function TerminalFilters({
   };
 
   return (
-    <div className="w-72 bg-white rounded-xl shadow-lg border border-gray-200 h-full overflow-y-auto">
+    <div className="w-72 bg-white border-l border-gray-200 h-full overflow-y-auto">
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center">
@@ -325,7 +324,7 @@ export default function TerminalFilters({
           </h3>
         </div>
         
-        <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+        <div className="space-y-3">
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <button 
               onClick={() => toggleFilterSection('orbit')}

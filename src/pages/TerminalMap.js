@@ -322,7 +322,7 @@ export default function TerminalMap() {
   }
 
   return (
-    <div className="h-full flex">
+    <div className="flex flex-col h-full">
       <style jsx global>{`
         .custom-marker {
           background: transparent !important;
@@ -344,145 +344,149 @@ export default function TerminalMap() {
         }
       `}</style>
       
-      <div className="flex-1 h-full">
-        <MapContainer
-          center={[-25.2744, 133.7751]}
-          zoom={4}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      <div className="flex flex-1 overflow-hidden">
+        <div className="w-80 border-r border-gray-200 flex flex-col">
+          <TerminalFilters
+            terminals={terminals}
+            filteredTerminals={filteredTerminals}
+            selectedOrbitTypes={selectedOrbitTypes}
+            setSelectedOrbitTypes={setSelectedOrbitTypes}
+            selectedAcquirers={selectedAcquirers}
+            setSelectedAcquirers={setSelectedAcquirers}
+            selectedPosConnections={selectedPosConnections}
+            setSelectedPosConnections={setSelectedPosConnections}
+            selectedHardware={selectedHardware}
+            setSelectedHardware={setSelectedHardware}
+            selectedVas={selectedVas}
+            setSelectedVas={setSelectedVas}
+            selectedFeatures={selectedFeatures}
+            setSelectedFeatures={setSelectedFeatures}
+            posConnectionsState={posConnectionsState}
+            setPosConnectionsState={setPosConnectionsState}
+            hardwareState={hardwareState}
+            setHardwareState={setHardwareState}
+            vasState={vasState}
+            setVasState={setVasState}
+            activeFilterSection={activeFilterSection}
+            setActiveFilterSection={setActiveFilterSection}
           />
-          
-          {filteredTerminals.map((terminal) => {
-            const hardwareLabel = hardwareState
-              .flatMap(hw => 
-                hw.children 
-                  ? [{ id: hw.id, label: hw.label }, ...hw.children.map(c => ({ id: c.id, label: c.label }))]
-                  : [{ id: hw.id, label: hw.label }]
-              )
-              .find(item => item.id === terminal.hardwareModel || item.id === terminal.hardwareBrand)?.label;
+        </div>
+        
+        <div className="flex-1 h-full">
+          <MapContainer
+            center={[-25.2744, 133.7751]}
+            zoom={4}
+            style={{ height: '100%', width: '100%' }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            
+            {filteredTerminals.map((terminal) => {
+              const hardwareLabel = hardwareState
+                .flatMap(hw => 
+                  hw.children 
+                    ? [{ id: hw.id, label: hw.label }, ...hw.children.map(c => ({ id: c.id, label: c.label }))]
+                    : [{ id: hw.id, label: hw.label }]
+                )
+                .find(item => item.id === terminal.hardwareModel || item.id === terminal.hardwareBrand)?.label;
 
-            return (
-              <Marker
-                key={terminal.id}
-                position={[terminal.lat, terminal.lng]}
-                icon={createCustomIcon(terminal)}
-              >
-                <Popup closeButton={false}>
-                  <div className="w-80 p-4">
-                    <div className="text-center mb-4">
-                      <h3 className="text-xl font-bold text-gray-800">{terminal.merchantName}</h3>
-                      <div className="flex justify-center items-center mt-1 space-x-2">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
-                          {terminal.merchantType}
-                        </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          terminal.status === 'online' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {terminal.status.toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between text-xs text-gray-500 mb-4">
-                      <div>
-                        <span className="block font-medium">Terminal ID</span>
-                        <span>{terminal.id}</span>
-                      </div>
-                      <div>
-                        <span className="block font-medium">Hardware</span>
-                        <span>{hardwareLabel}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      {vasCompatibility.map(group => (
-                        <div key={group.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleVasGroupInPopup(group.id);
-                            }}
-                            className="w-full flex justify-between items-center p-2 bg-gray-50 hover:bg-gray-100 transition-colors"
-                          >
-                            <div className="flex items-center">
-                              {group.icon}
-                              <span className="text-sm font-medium">{group.label}</span>
-                            </div>
-                            {expandedVasGroups[group.id] ? (
-                              <FiChevronUp className="text-gray-500" />
-                            ) : (
-                              <FiChevronDown className="text-gray-500" />
-                            )}
-                          </button>
-                          
-                          {expandedVasGroups[group.id] && (
-                            <div className="p-2 grid grid-cols-2 gap-2">
-                              {group.children.map(child => {
-                                const feature = terminal.vasFeatures.find(f => f.id === child.id);
-                                return (
-                                  <button
-                                    key={child.id}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleVasFeature(terminal.id, child.id);
-                                    }}
-                                    className={`flex items-center text-xs p-1 rounded ${
-                                      feature?.enabled 
-                                        ? 'bg-indigo-50 text-indigo-700' 
-                                        : 'hover:bg-gray-50'
-                                    }`}
-                                  >
-                                    {feature?.enabled ? (
-                                      <FiCheck className="mr-1 text-indigo-500" size={12} />
-                                    ) : (
-                                      <FiCircle className="mr-1 text-gray-300" size={12} />
-                                    )}
-                                    {child.label}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          )}
+              return (
+                <Marker
+                  key={terminal.id}
+                  position={[terminal.lat, terminal.lng]}
+                  icon={createCustomIcon(terminal)}
+                >
+                  <Popup closeButton={false}>
+                    <div className="w-80 p-4">
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl font-bold text-gray-800">{terminal.merchantName}</h3>
+                        <div className="flex justify-center items-center mt-1 space-x-2">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                            {terminal.merchantType}
+                          </span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            terminal.status === 'online' 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-red-100 text-red-700'
+                          }`}>
+                            {terminal.status.toUpperCase()}
+                          </span>
                         </div>
-                      ))}
+                      </div>
+                      
+                      <div className="flex justify-between text-xs text-gray-500 mb-4">
+                        <div>
+                          <span className="block font-medium">Terminal ID</span>
+                          <span>{terminal.id}</span>
+                        </div>
+                        <div>
+                          <span className="block font-medium">Hardware</span>
+                          <span>{hardwareLabel}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {vasCompatibility.map(group => (
+                          <div key={group.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleVasGroupInPopup(group.id);
+                              }}
+                              className="w-full flex justify-between items-center p-2 bg-gray-50 hover:bg-gray-100 transition-colors"
+                            >
+                              <div className="flex items-center">
+                                {group.icon}
+                                <span className="text-sm font-medium">{group.label}</span>
+                              </div>
+                              {expandedVasGroups[group.id] ? (
+                                <FiChevronUp className="text-gray-500" />
+                              ) : (
+                                <FiChevronDown className="text-gray-500" />
+                              )}
+                            </button>
+                            
+                            {expandedVasGroups[group.id] && (
+                              <div className="p-2 grid grid-cols-2 gap-2">
+                                {group.children.map(child => {
+                                  const feature = terminal.vasFeatures.find(f => f.id === child.id);
+                                  return (
+                                    <button
+                                      key={child.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleVasFeature(terminal.id, child.id);
+                                      }}
+                                      className={`flex items-center text-xs p-1 rounded ${
+                                        feature?.enabled 
+                                          ? 'bg-indigo-50 text-indigo-700' 
+                                          : 'hover:bg-gray-50'
+                                      }`}
+                                    >
+                                      {feature?.enabled ? (
+                                        <FiCheck className="mr-1 text-indigo-500" size={12} />
+                                      ) : (
+                                        <FiCircle className="mr-1 text-gray-300" size={12} />
+                                      )}
+                                      {child.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MapContainer>
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
+        </div>
       </div>
-
-      <TerminalFilters
-        terminals={terminals}
-        filteredTerminals={filteredTerminals}
-        selectedOrbitTypes={selectedOrbitTypes}
-        setSelectedOrbitTypes={setSelectedOrbitTypes}
-        selectedAcquirers={selectedAcquirers}
-        setSelectedAcquirers={setSelectedAcquirers}
-        selectedPosConnections={selectedPosConnections}
-        setSelectedPosConnections={setSelectedPosConnections}
-        selectedHardware={selectedHardware}
-        setSelectedHardware={setSelectedHardware}
-        selectedVas={selectedVas}
-        setSelectedVas={setSelectedVas}
-        selectedFeatures={selectedFeatures}
-        setSelectedFeatures={setSelectedFeatures}
-        posConnectionsState={posConnectionsState}
-        setPosConnectionsState={setPosConnectionsState}
-        hardwareState={hardwareState}
-        setHardwareState={setHardwareState}
-        vasState={vasState}
-        setVasState={setVasState}
-        activeFilterSection={activeFilterSection}
-        setActiveFilterSection={setActiveFilterSection}
-      />
     </div>
   );
 }
