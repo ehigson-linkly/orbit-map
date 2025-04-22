@@ -11,7 +11,7 @@ export default function App() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    if (password === 'i00t#GG3Fzfe') {
+    if (password === '1234') {
       setIsAuthenticated(true);
     } else {
       alert('Incorrect password');
@@ -26,7 +26,7 @@ export default function App() {
           <input
             type="password"
             className="w-full p-2 border rounded mb-4"
-            placeholder="Enter password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
