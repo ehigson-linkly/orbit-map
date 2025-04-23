@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { TerminalContext } from '../context/TerminalContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -201,13 +201,14 @@ export default function TerminalMap() {
   ]);
   const [vasState, setVasState] = useState(vasCompatibility);
   const [activeFilterSection, setActiveFilterSection] = useState(null);
-  const terminalFeatures = [
+  
+  const terminalFeatures = useMemo(() => [
     { id: 'acquirer_redundancy', label: 'Acquirer Redundancy', icon: <FiServer className="mr-2 text-pink-500" /> },
     { id: 'ai_fraud', label: 'AI Fraud Detection', icon: <FiServer className="mr-2 text-pink-500" /> },
     { id: 'ai_routing', label: 'AI SmartRouting (LCR)', icon: <FiServer className="mr-2 text-pink-500" /> },
     { id: 'wifi', label: 'WiFi Connectivity', icon: <FiServer className="mr-2 text-pink-500" /> },
     { id: 'analytics', label: 'Advanced Analytics', icon: <FiServer className="mr-2 text-pink-500" /> }
-  ];
+  ], []);
 
   const createCustomIcon = (terminal) => {
     const statusColor = terminal.status === 'online' ? 'border-green-500' : 'border-red-500';
@@ -311,7 +312,9 @@ export default function TerminalMap() {
     selectedFeatures,
     terminals,
     merchantSearch,
-    industrySearch
+    industrySearch,
+    posConnectionsState,
+    terminalFeatures
   ]);
 
   const toggleVasGroupInPopup = (groupId) => {
