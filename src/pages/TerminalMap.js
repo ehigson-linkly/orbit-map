@@ -189,7 +189,6 @@ export default function TerminalMap() {
 
     let filtered = [...terminals];
     
-    // Apply search filters first
     if (merchantSearch) {
       filtered = filtered.filter(terminal => 
         terminal.merchantName.toLowerCase().includes(merchantSearch.toLowerCase())
@@ -202,7 +201,6 @@ export default function TerminalMap() {
       );
     }
     
-    // Then apply other filters
     filtered = filtered.filter(terminal => 
       selectedOrbitTypes.length === 0 || selectedOrbitTypes.includes(terminal.orbitType)
     );
@@ -308,8 +306,8 @@ export default function TerminalMap() {
         }
       `}</style>
       
-      <div className="flex flex-1 overflow-hidden relative">
-        <div className="flex-1 h-full mr-80">
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-1 h-full">
           <MapContainer
             center={[-25.2744, 133.7751]}
             zoom={4}
@@ -424,8 +422,7 @@ export default function TerminalMap() {
           </MapContainer>
         </div>
 
-        <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-2 border-gray-200 flex flex-col z-[1000] shadow-lg">
-          <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
+        <div className="w-80 bg-white border-1 border-gray-200 flex flex-col shadow-lg overflow-y-auto">
           <TerminalFilters
             terminals={terminals}
             filteredTerminals={filteredTerminals}

@@ -37,52 +37,53 @@ export default function Dashboard() {
   } = useFilter();
 
   return (
-    <div className="flex">
-      <div className="flex-1 space-y-6 mr-80">
-        <OverviewCards />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <TerminalStatusChart />
-            <TopMerchantsTable />
-          </div>
+    <div className="flex flex-col h-full">
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6">
+          <OverviewCards />
           
-          <div className="space-y-6">
-            <RevenueByCategory />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+            <div className="lg:col-span-2 space-y-6">
+              <TerminalStatusChart />
+              <TopMerchantsTable />
+            </div>
+            
+            <div className="space-y-6">
+              <RevenueByCategory />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-2 border-gray-200 flex flex-col z-[1000] shadow-lg">
-        <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent"></div>
-        <TerminalFilters
-          terminals={terminals}
-          filteredTerminals={filteredTerminals}
-          selectedOrbitTypes={selectedOrbitTypes}
-          setSelectedOrbitTypes={setSelectedOrbitTypes}
-          selectedAcquirers={selectedAcquirers}
-          setSelectedAcquirers={setSelectedAcquirers}
-          selectedPosConnections={selectedPosConnections}
-          setSelectedPosConnections={setSelectedPosConnections}
-          selectedHardware={selectedHardware}
-          setSelectedHardware={setSelectedHardware}
-          selectedVas={selectedVas}
-          setSelectedVas={setSelectedVas}
-          selectedFeatures={selectedFeatures}
-          setSelectedFeatures={setSelectedFeatures}
-          posConnectionsState={posConnectionsState}
-          setPosConnectionsState={setPosConnectionsState}
-          hardwareState={hardwareState}
-          setHardwareState={setHardwareState}
-          vasState={vasState}
-          setVasState={setVasState}
-          activeFilterSection={activeFilterSection}
-          setActiveFilterSection={setActiveFilterSection}
-          merchantSearch={merchantSearch}
-          setMerchantSearch={setMerchantSearch}
-          industrySearch={industrySearch}
-          setIndustrySearch={setIndustrySearch}
-        />
+        <div className="w-80 bg-white border-l border-gray-200 flex flex-col shadow-lg overflow-y-auto">
+          <TerminalFilters
+            terminals={terminals}
+            filteredTerminals={filteredTerminals}
+            selectedOrbitTypes={selectedOrbitTypes}
+            setSelectedOrbitTypes={setSelectedOrbitTypes}
+            selectedAcquirers={selectedAcquirers}
+            setSelectedAcquirers={setSelectedAcquirers}
+            selectedPosConnections={selectedPosConnections}
+            setSelectedPosConnections={setSelectedPosConnections}
+            selectedHardware={selectedHardware}
+            setSelectedHardware={setSelectedHardware}
+            selectedVas={selectedVas}
+            setSelectedVas={setSelectedVas}
+            selectedFeatures={selectedFeatures}
+            setSelectedFeatures={setSelectedFeatures}
+            posConnectionsState={posConnectionsState}
+            setPosConnectionsState={setPosConnectionsState}
+            hardwareState={hardwareState}
+            setHardwareState={setHardwareState}
+            vasState={vasState}
+            setVasState={setVasState}
+            activeFilterSection={activeFilterSection}
+            setActiveFilterSection={setActiveFilterSection}
+            merchantSearch={merchantSearch}
+            setMerchantSearch={setMerchantSearch}
+            industrySearch={industrySearch}
+            setIndustrySearch={setIndustrySearch}
+          />
+        </div>
       </div>
     </div>
   );
