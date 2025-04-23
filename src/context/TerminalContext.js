@@ -1,16 +1,25 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
 export const TerminalContext = createContext({
   terminals: [],
   isLoading: true,
   timeRange: '7d',
-  setTimeRange: () => {}
+  setTimeRange: () => {},
+  updateTerminal: () => {}
 });
 
 export function TerminalProvider({ children }) {
   const [terminals, setTerminals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('7d');
+
+  const updateTerminal = async (terminalId, updates) => {
+    setTerminals(prevTerminals => 
+      prevTerminals.map(terminal => 
+        terminal.id === terminalId ? { ...terminal, ...updates } : terminal
+      )
+    );
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +42,7 @@ export function TerminalProvider({ children }) {
     isLoading,
     timeRange,
     setTimeRange,
+    updateTerminal
   };
 
   return (
@@ -40,6 +50,10 @@ export function TerminalProvider({ children }) {
       {children}
     </TerminalContext.Provider>
   );
+}
+
+export function useTerminal() {
+  return useContext(TerminalContext);
 }
 
 function generateMockTerminals() {

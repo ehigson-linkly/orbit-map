@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { TerminalContext } from '../context/TerminalContext';
+import { useFilter } from '../context/FilterContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -17,7 +18,7 @@ import {
   FiHardDrive,
   FiServer
 } from 'react-icons/fi';
-import TerminalFilters from './TerminalFilters';
+import TerminalFilters from '../components/TerminalFilters';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -91,6 +92,14 @@ const vasCompatibility = [
   }
 ];
 
+const terminalFeatures = [
+  { id: 'acquirer_redundancy', label: 'Acquirer Redundancy' },
+  { id: 'ai_fraud', label: 'AI Fraud Detection' },
+  { id: 'ai_routing', label: 'AI SmartRouting (LCR)' },
+  { id: 'wifi', label: 'WiFi Connectivity' },
+  { id: 'analytics', label: 'Advanced Analytics' }
+];
+
 const getTerminalImage = (terminal) => {
   const { acquirer, hardwareBrand, hardwareModel } = terminal;
   const supportedBanks = ['cba', 'nab', 'westpac'];
@@ -113,102 +122,36 @@ const getTerminalImage = (terminal) => {
 
 export default function TerminalMap() {
   const { terminals, isLoading, updateTerminal } = useContext(TerminalContext);
+  const {
+    selectedOrbitTypes,
+    selectedAcquirers,
+    selectedPosConnections,
+    selectedHardware,
+    selectedVas,
+    selectedFeatures,
+    merchantSearch,
+    industrySearch,
+    posConnectionsState,
+    hardwareState,
+    vasState,
+    setSelectedOrbitTypes,
+    setSelectedAcquirers,
+    setSelectedPosConnections,
+    setSelectedHardware,
+    setSelectedVas,
+    setSelectedFeatures,
+    setPosConnectionsState,
+    setHardwareState,
+    setVasState,
+    setMerchantSearch,
+    setIndustrySearch,
+    activeFilterSection,
+    setActiveFilterSection
+  } = useFilter();
+  
   const [mapReady, setMapReady] = useState(false);
   const [filteredTerminals, setFilteredTerminals] = useState([]);
-  const [selectedOrbitTypes, setSelectedOrbitTypes] = useState([]);
-  const [selectedAcquirers, setSelectedAcquirers] = useState([]);
-  const [selectedPosConnections, setSelectedPosConnections] = useState([]);
-  const [selectedHardware, setSelectedHardware] = useState([]);
-  const [selectedVas, setSelectedVas] = useState([]);
-  const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [expandedVasGroups, setExpandedVasGroups] = useState({});
-  const [merchantSearch, setMerchantSearch] = useState('');
-  const [industrySearch, setIndustrySearch] = useState('');
-  
-  const [posConnectionsState, setPosConnectionsState] = useState([
-    {
-      id: 'lightspeed',
-      label: 'Lightspeed',
-      icon: <FiLink className="mr-2 text-green-500" />,
-      expanded: false,
-      children: [
-        { id: 'r_series', label: 'R-Series' },
-        { id: 'vend', label: 'Vend' },
-        { id: 'kounta', label: 'Kounta' }
-      ]
-    },
-    {
-      id: 'oracle',
-      label: 'Oracle',
-      icon: <FiLink className="mr-2 text-green-500" />,
-      expanded: false,
-      children: [
-        { id: 'retail_xstore', label: 'Retail Xstore' },
-        { id: 'micros', label: 'Micros' }
-      ]
-    },
-    { id: 'retail_directions', label: 'Retail Directions', icon: <FiLink className="mr-2 text-green-500" /> },
-    { id: 'ncr', label: 'NCR Counterpoint / POSitouch', icon: <FiLink className="mr-2 text-green-500" /> },
-    { id: 'redcat', label: 'Redcat', icon: <FiLink className="mr-2 text-green-500" /> },
-    { id: 'swiftpos', label: 'SwiftPOS', icon: <FiLink className="mr-2 text-green-500" /> },
-    { id: 'hl_pos', label: 'H&L POS', icon: <FiLink className="mr-2 text-green-500" /> }
-  ]);
-  const [hardwareState, setHardwareState] = useState([
-    {
-      id: 'ingenico',
-      label: 'Ingenico',
-      icon: <FiHardDrive className="mr-2 text-yellow-500" />,
-      expanded: false,
-      children: [
-        { id: 'move5000', label: 'Move5000' },
-        { id: 'dx8000', label: 'DX8000' },
-        { id: 'axium', label: 'Axium' }
-      ]
-    },
-    {
-      id: 'verifone',
-      label: 'Verifone',
-      icon: <FiHardDrive className="mr-2 text-yellow-500" />,
-      expanded: false,
-      children: [
-        { id: 't650m', label: 'T650M' },
-        { id: 't650p', label: 'T650P' },
-        { id: 'victa', label: 'Victa' }
-      ]
-    },
-    {
-      id: 'pax',
-      label: 'PAX',
-      icon: <FiHardDrive className="mr-2 text-yellow-500" />,
-      expanded: false,
-      children: [
-        { id: 'a920max', label: 'A920Max' },
-        { id: 'a960', label: 'A960' },
-        { id: 'a3700', label: 'A3700' }
-      ]
-    },
-    {
-      id: 'castles',
-      label: 'Castles',
-      icon: <FiHardDrive className="mr-2 text-yellow-500" />,
-      expanded: false,
-      children: [
-        { id: 'pro', label: 'Pro' },
-        { id: 's1f3', label: 'S1F3' },
-        { id: 's1e2', label: 'S1E2' }
-      ]
-    }
-  ]);
-  const [vasState, setVasState] = useState(vasCompatibility);
-  const [activeFilterSection, setActiveFilterSection] = useState(null);
-  
-  const terminalFeatures = useMemo(() => [
-    { id: 'acquirer_redundancy', label: 'Acquirer Redundancy', icon: <FiServer className="mr-2 text-pink-500" /> },
-    { id: 'ai_fraud', label: 'AI Fraud Detection', icon: <FiServer className="mr-2 text-pink-500" /> },
-    { id: 'ai_routing', label: 'AI SmartRouting (LCR)', icon: <FiServer className="mr-2 text-pink-500" /> },
-    { id: 'wifi', label: 'WiFi Connectivity', icon: <FiServer className="mr-2 text-pink-500" /> },
-    { id: 'analytics', label: 'Advanced Analytics', icon: <FiServer className="mr-2 text-pink-500" /> }
-  ], []);
 
   const createCustomIcon = (terminal) => {
     const statusColor = terminal.status === 'online' ? 'border-green-500' : 'border-red-500';
@@ -313,8 +256,7 @@ export default function TerminalMap() {
     terminals,
     merchantSearch,
     industrySearch,
-    posConnectionsState,
-    terminalFeatures
+    posConnectionsState
   ]);
 
   const toggleVasGroupInPopup = (groupId) => {

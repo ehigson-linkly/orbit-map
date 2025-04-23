@@ -13,7 +13,8 @@ import {
   FiWifi,
   FiActivity,
   FiSearch,
-  FiHome
+  FiHome,
+  FiMap
 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
@@ -535,7 +536,6 @@ export default function TerminalFilters({
           </div>
         </div>
 
-        {/* Moved search bars to bottom */}
         <div className="mt-4 space-y-3">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -563,14 +563,22 @@ export default function TerminalFilters({
             />
           </div>
 
-          {/* Dashboard View Button */}
-          <Link 
-            to="/dashboard"
-            className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-          >
-            <FiHome className="mr-2" />
-            Dashboard View
-          </Link>
+          <div className="grid grid-cols-2 gap-2">
+            <Link 
+              to="/dashboard"
+              className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            >
+              <FiHome className="mr-2" />
+              Dashboard
+            </Link>
+            <Link 
+              to="/terminal-map"
+              className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              <FiMap className="mr-2" />
+              Map View
+            </Link>
+          </div>
         </div>
       </div>
       
