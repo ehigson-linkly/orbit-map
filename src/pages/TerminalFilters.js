@@ -12,8 +12,10 @@ import {
   FiMove,
   FiWifi,
   FiActivity,
-  FiSearch
+  FiSearch,
+  FiHome
 } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const orbitTypes = [
   { id: 'standalone', label: 'Standalone', icon: <FiDatabase className="mr-2 text-blue-500" /> },
@@ -40,8 +42,8 @@ const terminalFeatures = [
 ];
 
 export default function TerminalFilters({
-  terminals,
-  filteredTerminals,
+  terminals = [],
+  filteredTerminals = [],
   selectedOrbitTypes,
   setSelectedOrbitTypes,
   selectedAcquirers,
@@ -184,35 +186,6 @@ export default function TerminalFilters({
             <FiFilter className="mr-2 text-blue-500" /> 
             <span className="flex-1">Filters</span>
           </h3>
-        </div>
-        
-        {/* Search Bars */}
-        <div className="space-y-3 mb-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FiSearch className="text-gray-400" />
-            </div>
-            <input
-              type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Merchant"
-              value={merchantSearch}
-              onChange={(e) => setMerchantSearch(e.target.value)}
-            />
-          </div>
-          
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FiSearch className="text-gray-400" />
-            </div>
-            <input
-              type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Industry"
-              value={industrySearch}
-              onChange={(e) => setIndustrySearch(e.target.value)}
-            />
-          </div>
         </div>
         
         <div className="space-y-3">
@@ -561,11 +534,49 @@ export default function TerminalFilters({
             )}
           </div>
         </div>
+
+        {/* Moved search bars to bottom */}
+        <div className="mt-4 space-y-3">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Merchant"
+              value={merchantSearch}
+              onChange={(e) => setMerchantSearch(e.target.value)}
+            />
+          </div>
+          
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Industry"
+              value={industrySearch}
+              onChange={(e) => setIndustrySearch(e.target.value)}
+            />
+          </div>
+
+          {/* Dashboard View Button */}
+          <Link 
+            to="/dashboard"
+            className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+          >
+            <FiHome className="mr-2" />
+            Dashboard View
+          </Link>
+        </div>
       </div>
       
       <div className="p-4 border-t border-gray-200">
         <p className="text-sm text-gray-500">
-          Showing {filteredTerminals.length} of {terminals.length} terminals
+          Showing {filteredTerminals?.length || 0} of {terminals?.length || 0} terminals
         </p>
       </div>
     </div>
