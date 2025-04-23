@@ -8,7 +8,7 @@ import { useFilter } from '../context/FilterContext';
 import { useTerminal } from '../context/TerminalContext';
 
 export default function Dashboard() {
-  const { terminals, filteredTerminals, isLoading } = useTerminal();
+  const { terminals, filteredTerminals } = useTerminal();
   const {
     selectedOrbitTypes,
     setSelectedOrbitTypes,

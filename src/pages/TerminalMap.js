@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TerminalContext } from '../context/TerminalContext';
 import { useFilter } from '../context/FilterContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -13,10 +13,7 @@ import {
   FiCheck,
   FiCircle,
   FiChevronDown,
-  FiChevronUp,
-  FiLink,
-  FiHardDrive,
-  FiServer
+  FiChevronUp
 } from 'react-icons/fi';
 import TerminalFilters from '../components/TerminalFilters';
 

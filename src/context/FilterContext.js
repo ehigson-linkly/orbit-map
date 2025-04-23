@@ -2,7 +2,6 @@ import React, { createContext, useState, useContext } from 'react';
 import { 
   FiLink,
   FiHardDrive,
-  FiServer,
   FiShoppingCart,
   FiAward,
   FiGift,
