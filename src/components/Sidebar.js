@@ -14,7 +14,7 @@ import {
 const navItems = [
   { name: 'Terminal Map', icon: <FiMap className="w-5 h-5" />, path: '/terminal-map' }, 
   { name: 'Dashboard', icon: <FiMonitor className="w-5 h-5" />, path: '/dashboard' },
-  { name: 'Live Status', icon: <FiActivity className="w-5 h-5" />, path: '/live-status' },
+  { name: 'Connection Monitoring', icon: <FiActivity className="w-5 h-5" />, path: '/connection-monitoring' },
   { name: 'Performance', icon: <FiTrendingUp className="w-5 h-5" />, path: '/performance' },
   { name: 'Revenue Analytics', icon: <FiPieChart className="w-5 h-5" />, path: '/revenue-analytics' },
   { name: 'Alerts', icon: <FiAlertCircle className="w-5 h-5" />, path: '/alerts' },

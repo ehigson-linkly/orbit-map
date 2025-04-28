@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import TerminalMap from './pages/TerminalMap';
+import ConnectionMonitoring from './pages/ConnectionMonitoring';
 import { TerminalProvider } from './context/TerminalContext';
 import { FilterProvider } from './context/FilterContext';
 
@@ -55,6 +56,7 @@ export default function App() {
                   <Route path="/" element={<Navigate to="/terminal-map" replace />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/terminal-map" element={<TerminalMap />} />
+                  <Route path="/connection-monitoring" element={<ConnectionMonitoring />} />
                 </Routes>
               </main>
             </div>
