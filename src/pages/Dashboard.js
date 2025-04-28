@@ -6,6 +6,8 @@ import RevenueByCategory from '../sections/revenuebycategory';
 import TerminalFilters from '../components/TerminalFilters';
 import { useFilter } from '../context/FilterContext';
 import { useTerminal } from '../context/TerminalContext';
+import PaymentTypeCharts from '../sections/PaymentTypeCharts';
+import CardTypeCharts from '../sections/CardTypeCharts';
 
 export default function Dashboard() {
   const { terminals, filteredTerminals } = useTerminal();
@@ -39,21 +41,30 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-6">
+        {/* Main content */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Top overview cards */}
           <OverviewCards />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            <div className="lg:col-span-2 space-y-6">
-              <TerminalStatusChart />
-              <TopMerchantsTable />
-            </div>
-            
-            <div className="space-y-6">
-              <RevenueByCategory />
-            </div>
+
+          {/* Top charts section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <PaymentTypeCharts />
+            <CardTypeCharts />
+          </div>
+
+          {/* Top merchants full width */}
+          <div>
+            <TopMerchantsTable />
+          </div>
+
+          {/* Revenue and Status charts side by side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RevenueByCategory />
+            <TerminalStatusChart />
           </div>
         </div>
 
+        {/* Filters panel */}
         <div className="w-80 bg-white border-l border-gray-200 flex flex-col shadow-lg overflow-y-auto">
           <TerminalFilters
             terminals={terminals}

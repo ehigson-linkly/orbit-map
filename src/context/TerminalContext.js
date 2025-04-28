@@ -155,6 +155,20 @@ function generateMockTerminals() {
     const acquirer = acquirers[Math.floor(Math.random() * acquirers.length)];
     const hardwareBrand = Object.keys(hardwareModels)[Math.floor(Math.random() * Object.keys(hardwareModels).length)];
     const hardwareModel = hardwareModels[hardwareBrand][Math.floor(Math.random() * hardwareModels[hardwareBrand].length)];
+    const transactionData = {
+      creditValue: Math.floor(Math.random() * 5000) + 1000,
+      debitValue: Math.floor(Math.random() * 3000) + 500,
+      creditVolume: Math.floor(Math.random() * 200) + 50,
+      debitVolume: Math.floor(Math.random() * 300) + 100,
+      visaValue: Math.floor(Math.random() * 4000) + 800,
+      mastercardValue: Math.floor(Math.random() * 3500) + 700,
+      amexValue: Math.floor(Math.random() * 2000) + 400,
+      otherCardValue: Math.floor(Math.random() * 1000) + 200,
+      visaVolume: Math.floor(Math.random() * 250) + 60,
+      mastercardVolume: Math.floor(Math.random() * 200) + 50,
+      amexVolume: Math.floor(Math.random() * 100) + 20,
+      otherCardVolume: Math.floor(Math.random() * 50) + 10,
+    };
 
     const vasCount = Math.floor(Math.random() * 6) + 3;
     const vasFeatures = [];
@@ -181,7 +195,8 @@ function generateMockTerminals() {
       acquirer,
       hardwareBrand,
       hardwareModel,
-      vasFeatures
+      vasFeatures,
+      transactionData
     };
   });
 }
