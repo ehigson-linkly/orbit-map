@@ -253,7 +253,7 @@ const ConnectionMonitoring = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-              <FiActivity className="mr-2 text-blue-600" /> Connection Monitoring
+              <FiActivity className="mr-2 text-gray-700" /> Connection Monitoring
             </h1>
             <p className="text-gray-600 mt-1">
               Real-time status of all system connections and services
@@ -267,7 +267,7 @@ const ConnectionMonitoring = () => {
               <input
                 type="text"
                 placeholder="Search connections..."
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -285,32 +285,32 @@ const ConnectionMonitoring = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-sm p-6 text-white">
+          <div className="bg-gray-800 rounded-xl shadow-sm p-6 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold">System Health Overview</h2>
-                <p className="text-blue-100 text-sm mt-1">Last updated: {lastUpdated.toLocaleTimeString()}</p>
+                <p className="text-gray-300 text-sm mt-1">Last updated: {lastUpdated.toLocaleTimeString()}</p>
               </div>
-              <div className="bg-blue-500 bg-opacity-30 rounded-full p-2">
+              <div className="bg-gray-700 rounded-full p-2">
                 <FiActivity size={24} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="bg-blue-500 bg-opacity-20 rounded-lg p-4">
+              <div className="bg-gray-700 rounded-lg p-4">
                 <div className="text-3xl font-bold">4</div>
-                <div className="text-sm text-blue-100">Healthy Systems</div>
+                <div className="text-sm text-gray-300">Healthy Systems</div>
               </div>
               <div className="bg-orange-500 bg-opacity-20 rounded-lg p-4">
                 <div className="text-3xl font-bold">1</div>
-                <div className="text-sm text-orange-100">Warning Systems</div>
+                <div className="text-sm text-orange-200">Warning Systems</div>
               </div>
-              <div className="bg-gray-500 bg-opacity-20 rounded-lg p-4">
+              <div className="bg-gray-700 rounded-lg p-4">
                 <div className="text-3xl font-bold">0</div>
-                <div className="text-sm text-gray-100">Critical Issues</div>
+                <div className="text-sm text-gray-300">Critical Issues</div>
               </div>
               <div className="bg-green-500 bg-opacity-20 rounded-lg p-4">
                 <div className="text-3xl font-bold">99.8%</div>
-                <div className="text-sm text-green-100">Overall Uptime</div>
+                <div className="text-sm text-green-200">Overall Uptime</div>
               </div>
             </div>
           </div>
